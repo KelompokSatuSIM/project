@@ -23,9 +23,19 @@
             animation: fadeIn 0.3s ease-out;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        @keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+        .animate-fade-in {
+            animation: fade-in 0.3s ease-out;
         }
         
         .card-hover:hover {
@@ -534,17 +544,47 @@
             </div>
 
             <div id="section-stock" class="fade-in hidden">
-                <div id="lowStockAlert" class="hidden bg-red-50 border-l-4 border-red-500 rounded-lg p-4 mb-6">
-                    <div class="flex items-center gap-3">
-                        <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                        </svg>
-                        <div>
-                            <p class="font-semibold text-red-800">Peringatan Stok Menipis!</p>
-                            <p class="text-sm text-red-700" id="lowStockMessage"></p>
-                        </div>
-                    </div>
-                </div>
+                <!-- Tambahkan kedua section ini di dashboard-owner.html, di atas tabel stok -->
+
+<!-- Peringatan Stok Kosong -->
+<div id="emptyStockAlert" class="hidden bg-gray-50 border-l-4 border-gray-600 p-4 mb-4 rounded-lg shadow-sm">
+    <div class="flex items-start">
+        <div class="flex-shrink-0">
+            <svg class="h-6 w-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+        </div>
+        <div class="ml-3 flex-1">
+            <h3 class="text-sm font-bold text-gray-800 mb-2">⚠️ Stok Kosong!</h3>
+            <div id="emptyStockList" class="text-sm text-gray-700"></div>
+        </div>
+        <button onclick="document.getElementById('emptyStockAlert').classList.add('hidden')" class="flex-shrink-0 ml-4 text-gray-400 hover:text-gray-600">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+    </div>
+</div>
+
+<!-- Peringatan Stok Menipis -->
+<div id="lowStockAlert" class="hidden bg-red-50 border-l-4 border-red-500 p-4 mb-4 rounded-lg shadow-sm">
+    <div class="flex items-start">
+        <div class="flex-shrink-0">
+            <svg class="h-6 w-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+        </div>
+        <div class="ml-3 flex-1">
+            <h3 class="text-sm font-bold text-red-800 mb-2">⚠️ Stok Menipis!</h3>
+            <div id="lowStockList" class="text-sm text-red-700"></div>
+        </div>
+        <button onclick="document.getElementById('lowStockAlert').classList.add('hidden')" class="flex-shrink-0 ml-4 text-red-400 hover:text-red-600">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+    </div>
+</div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="lg:col-span-1">
@@ -563,8 +603,6 @@
                                         <option value="">-- Pilih Kategori --</option>
                                         <option value="Makanan">Makanan</option>
                                         <option value="Minuman">Minuman</option>
-                                        <option value="Elektronik">Elektronik</option>
-                                        <option value="Pakaian">Pakaian</option>
                                         <option value="Lainnya">Lainnya</option>
                                     </select>
                                 </div>
@@ -825,8 +863,6 @@
                         <option value="">-- Pilih Kategori --</option>
                         <option value="Makanan">Makanan</option>
                         <option value="Minuman">Minuman</option>
-                        <option value="Elektronik">Elektronik</option>
-                        <option value="Pakaian">Pakaian</option>
                         <option value="Lainnya">Lainnya</option>
                     </select>
                 </div>
@@ -1172,117 +1208,195 @@
         }
 
         function loadProducts() {
-            const select = document.getElementById('productSelect');
-            if (!select) return;
+    const select = document.getElementById('productSelect');
+    if (!select) return;
+    
+    select.innerHTML = '<option value="">-- Pilih Produk --</option>';
+    
+    stocks.forEach((stock, index) => {
+        if (stock.quantity > 0) {
+            // HITUNG STOK YANG SUDAH DI KERANJANG
+            const cartItem = cart.find(item => item.stockIndex === index);
+            const reservedStock = cartItem ? cartItem.quantity : 0;
+            const availableStock = stock.quantity - reservedStock;
             
-            select.innerHTML = '<option value="">-- Pilih Produk --</option>';
+            const option = document.createElement('option');
+            option.value = index;
             
-            stocks.forEach((stock, index) => {
-                if (stock.quantity > 0) {
-                    const option = document.createElement('option');
-                    option.value = index;
-                    option.textContent = `${stock.name} - Rp ${formatNumber(stock.sellPrice)} (Stok: ${stock.quantity})`;
-                    select.appendChild(option);
-                }
-            });
-
-            select.onchange = function() {
-                const index = this.value;
-                if (index !== '') {
-                    const stock = stocks[index];
-                    document.getElementById('productPrice').value = 'Rp ' + formatNumber(stock.sellPrice);
-                    document.getElementById('productQuantity').max = stock.quantity;
-                } else {
-                    document.getElementById('productPrice').value = '';
-                }
-            };
+            // TAMPILKAN STOK TERSISA REAL-TIME
+            if (availableStock > 0) {
+                option.textContent = `${stock.name} - Rp ${formatNumber(stock.sellPrice)} (Tersisa: ${availableStock})`;
+            } else {
+                option.textContent = `${stock.name} - HABIS (Semua di keranjang)`;
+                option.disabled = true;
+                option.style.color = '#999';
+            }
+            
+            select.appendChild(option);
         }
+    });
+
+    select.onchange = function() {
+        const index = this.value;
+        if (index !== '') {
+            const stock = stocks[index];
+            const cartItem = cart.find(item => item.stockIndex === parseInt(index));
+            const reservedStock = cartItem ? cartItem.quantity : 0;
+            const availableStock = stock.quantity - reservedStock;
+            
+            document.getElementById('productPrice').value = 'Rp ' + formatNumber(stock.sellPrice);
+            document.getElementById('productQuantity').max = availableStock;
+            document.getElementById('productQuantity').value = Math.min(1, availableStock);
+        } else {
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productQuantity').max = '';
+        }
+    };
+}
 
         function addToCart() {
-            const selectIndex = document.getElementById('productSelect').value;
-            const quantity = parseInt(document.getElementById('productQuantity').value);
+    const selectIndex = document.getElementById('productSelect').value;
+    const quantity = parseInt(document.getElementById('productQuantity').value);
 
-            if (selectIndex === '') {
-                alert('Pilih produk terlebih dahulu!');
-                return;
-            }
+    if (selectIndex === '') {
+        alert('Pilih produk terlebih dahulu!');
+        return;
+    }
 
-            const stock = stocks[selectIndex];
+    const stock = stocks[selectIndex];
 
-            if (quantity > stock.quantity) {
-                alert(`Stok tidak mencukupi! Tersedia: ${stock.quantity}`);
-                return;
-            }
+    // HITUNG TOTAL QUANTITY DI KERANJANG UNTUK PRODUK INI
+    const existingItem = cart.find(item => item.stockIndex === parseInt(selectIndex));
+    const currentCartQuantity = existingItem ? existingItem.quantity : 0;
+    const totalQuantityNeeded = currentCartQuantity + quantity;
 
-            const existingItem = cart.find(item => item.stockIndex === parseInt(selectIndex));
-            if (existingItem) {
-                existingItem.quantity += quantity;
-            } else {
-                cart.push({
-                    stockIndex: parseInt(selectIndex),
-                    name: stock.name,
-                    price: stock.sellPrice,
-                    costPrice: stock.costPrice,
-                    quantity: quantity,
-                    stockId: stock.id
-                });
-            }
-
-            updateCartDisplay();
-            
-            document.getElementById('productSelect').value = '';
-            document.getElementById('productQuantity').value = 1;
-            document.getElementById('productPrice').value = '';
+    // VALIDASI: CEK APAKAH TOTAL MELEBIHI STOK
+    if (totalQuantityNeeded > stock.quantity) {
+        const availableStock = stock.quantity - currentCartQuantity;
+        
+        if (availableStock <= 0) {
+            alert(`❌ Stok tidak mencukupi!\n\n` +
+                  `Produk: ${stock.name}\n` +
+                  `Stok tersedia: ${stock.quantity}\n` +
+                  `Sudah di keranjang: ${currentCartQuantity}\n` +
+                  `Sisa yang bisa ditambah: 0`);
+            return;
         }
+        
+        alert(`❌ Stok tidak mencukupi!\n\n` +
+              `Produk: ${stock.name}\n` +
+              `Stok tersedia: ${stock.quantity}\n` +
+              `Sudah di keranjang: ${currentCartQuantity}\n` +
+              `Sisa yang bisa ditambah: ${availableStock}\n\n` +
+              `Anda mencoba menambah: ${quantity}`);
+        return;
+    }
+
+    // JIKA VALIDASI LOLOS, TAMBAHKAN KE KERANJANG
+    if (existingItem) {
+        existingItem.quantity += quantity;
+    } else {
+        cart.push({
+            stockIndex: parseInt(selectIndex),
+            name: stock.name,
+            price: stock.sellPrice,
+            costPrice: stock.costPrice,
+            quantity: quantity,
+            stockId: stock.id
+        });
+    }
+
+    updateCartDisplay();
+    
+    // RESET FORM
+    document.getElementById('productSelect').value = '';
+    document.getElementById('productQuantity').value = 1;
+    document.getElementById('productPrice').value = '';
+    
+    // TAMPILKAN NOTIFIKASI SUKSES
+    showSuccessNotification(`✅ Berhasil ditambahkan ke keranjang!`);
+}
+
+// FUNGSI NOTIFIKASI SUKSES (OPSIONAL - UNTUK UX LEBIH BAIK)
+function showSuccessNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'fixed top-20 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in';
+    notification.innerHTML = `
+        <div class="flex items-center gap-3">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span class="font-medium">${message}</span>
+        </div>
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transition = 'opacity 0.3s';
+        setTimeout(() => notification.remove(), 300);
+    }, 2000);
+}
 
         function updateCartDisplay() {
-            const cartItemsDiv = document.getElementById('cartItems');
-            
-            if (cart.length === 0) {
-                cartItemsDiv.innerHTML = '<p class="text-gray-400 text-center py-8">Keranjang masih kosong</p>';
-                document.getElementById('cartSubtotal').textContent = 'Rp 0';
-                document.getElementById('cartTotal').textContent = 'Rp 0';
-                document.getElementById('cartItemCount').textContent = '0';
-                return;
-            }
+    const cartItemsDiv = document.getElementById('cartItems');
+    
+    if (cart.length === 0) {
+        cartItemsDiv.innerHTML = '<p class="text-gray-400 text-center py-8">Keranjang masih kosong</p>';
+        document.getElementById('cartSubtotal').textContent = 'Rp 0';
+        document.getElementById('cartTotal').textContent = 'Rp 0';
+        document.getElementById('cartItemCount').textContent = '0';
+        
+        // UPDATE DROPDOWN PRODUK UNTUK REFRESH STOK
+        loadProducts();
+        return;
+    }
 
-            let html = '';
-            let subtotal = 0;
-            let itemCount = 0;
+    let html = '';
+    let subtotal = 0;
+    let itemCount = 0;
 
-            cart.forEach((item, index) => {
-                const itemTotal = item.price * item.quantity;
-                subtotal += itemTotal;
-                itemCount += item.quantity;
+    cart.forEach((item, index) => {
+        const itemTotal = item.price * item.quantity;
+        subtotal += itemTotal;
+        itemCount += item.quantity;
 
-                html += `
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div class="flex-1">
-                            <p class="font-medium text-gray-800">${item.name}</p>
-                            <p class="text-sm text-gray-500">${item.quantity} x Rp ${formatNumber(item.price)}</p>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span class="font-semibold text-gray-800">Rp ${formatNumber(itemTotal)}</span>
-                            <button onclick="removeFromCart(${index})" type="button" class="text-red-500 hover:text-red-700">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            });
+        html += `
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div class="flex-1">
+                    <p class="font-medium text-gray-800">${item.name}</p>
+                    <p class="text-sm text-gray-500">${item.quantity} x Rp ${formatNumber(item.price)}</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="font-semibold text-gray-800">Rp ${formatNumber(itemTotal)}</span>
+                    <button onclick="removeFromCart(${index})" type="button" class="text-red-500 hover:text-red-700">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        `;
+    });
 
-            cartItemsDiv.innerHTML = html;
-            document.getElementById('cartSubtotal').textContent = 'Rp ' + formatNumber(subtotal);
-            document.getElementById('cartTotal').textContent = 'Rp ' + formatNumber(subtotal);
-            document.getElementById('cartItemCount').textContent = itemCount;
-        }
+    cartItemsDiv.innerHTML = html;
+    document.getElementById('cartSubtotal').textContent = 'Rp ' + formatNumber(subtotal);
+    document.getElementById('cartTotal').textContent = 'Rp ' + formatNumber(subtotal);
+    document.getElementById('cartItemCount').textContent = itemCount;
+    
+    // UPDATE DROPDOWN PRODUK UNTUK REFRESH STOK TERSISA
+    loadProducts();
+}
 
         function removeFromCart(index) {
-            cart.splice(index, 1);
-            updateCartDisplay();
-        }
+    cart.splice(index, 1);
+    updateCartDisplay(); // Ini akan otomatis memanggil loadProducts()
+}
+
+function clearCart() {
+    cart = [];
+    updateCartDisplay(); // Ini akan otomatis memanggil loadProducts()
+}
 
         function clearCart() {
             cart = [];
@@ -1576,55 +1690,67 @@
 }
 
         function loadStocks() {
-            const stockList = document.getElementById('stockList');
-            if (!stockList) return;
-            
-            if (stocks.length === 0) {
-                stockList.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-gray-400">Belum ada data stok</td></tr>';
-                return;
-            }
+    const stockList = document.getElementById('stockList');
+    if (!stockList) return;
+    
+    if (stocks.length === 0) {
+        stockList.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-gray-400">Belum ada data stok</td></tr>';
+        return;
+    }
 
-            let html = '';
-            stocks.forEach((stock) => {
-                const statusClass = stock.quantity < 10 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800';
-                const statusText = stock.quantity < 10 ? 'Stok Menipis' : 'Stok Aman';
-                
-                let actionColumn = '';
-                if (userRole === 'owner') {
-                    actionColumn = `
-                        <td class="py-3 px-4">
-    <button onclick='openEditStockModal(${JSON.stringify(stock).replace(/'/g, "\\'")})' type="button" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium mr-2">
-        Edit
-    </button>
-    <button onclick='deleteStock(${stock.id})' type="button" class="text-red-500 hover:text-red-700 text-sm font-medium">
-        <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-        </svg>
-        Hapus
-    </button>
-</td>
-                    `;
-                }
-
-                html += `
-                    <tr class="border-b border-gray-100 hover:bg-gray-50 stock-row" data-name="${stock.name.toLowerCase()}" data-category="${stock.category.toLowerCase()}">
-                        <td class="py-3 px-4">${stock.name}</td>
-                        <td class="py-3 px-4">${stock.category}</td>
-                        <td class="py-3 px-4 font-semibold">${stock.quantity}</td>
-                        <td class="py-3 px-4">Rp ${formatNumber(stock.costPrice)}</td>
-                        <td class="py-3 px-4">Rp ${formatNumber(stock.sellPrice)}</td>
-                        <td class="py-3 px-4">
-                            <span class="px-3 py-1 rounded-full text-xs font-semibold ${statusClass}">
-                                ${statusText}
-                            </span>
-                        </td>
-                        ${actionColumn}
-                    </tr>
-                `;
-            });
-
-            stockList.innerHTML = html;
+    let html = '';
+    stocks.forEach((stock) => {
+        // Ubah logika status berdasarkan kondisi stok
+        let statusClass, statusText;
+        
+        if (stock.quantity === 0) {
+            statusClass = 'bg-gray-100 text-gray-800';
+            statusText = 'Kosong';
+        } else if (stock.quantity < 10) {
+            statusClass = 'bg-red-100 text-red-800';
+            statusText = 'Stok Menipis';
+        } else {
+            statusClass = 'bg-green-100 text-green-800';
+            statusText = 'Stok Aman';
         }
+        
+        let actionColumn = '';
+        if (userRole === 'owner') {
+            actionColumn = `
+                <td class="py-3 px-4">
+                    <button onclick='openEditStockModal(${JSON.stringify(stock).replace(/'/g, "\\'")})'  type="button" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium mr-2">
+                        Edit
+                    </button>
+                    <button onclick='deleteStock(${stock.id})' type="button" class="text-red-500 hover:text-red-700 text-sm font-medium">
+                        <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        Hapus
+                    </button>
+                </td>
+            `;
+        }
+
+        html += `
+            <tr class="border-b border-gray-100 hover:bg-gray-50 stock-row" data-name="${stock.name.toLowerCase()}" data-category="${stock.category.toLowerCase()}">
+                <td class="py-3 px-4">${stock.name}</td>
+                <td class="py-3 px-4">${stock.category}</td>
+                <td class="py-3 px-4 font-semibold">${stock.quantity}</td>
+                <td class="py-3 px-4">Rp ${formatNumber(stock.costPrice)}</td>
+                <td class="py-3 px-4">Rp ${formatNumber(stock.sellPrice)}</td>
+                <td class="py-3 px-4">
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold ${statusClass}">
+                        ${statusText}
+                    </span>
+                </td>
+                ${actionColumn}
+            </tr>
+        `;
+    });
+
+    stockList.innerHTML = html;
+}
+
 
         function searchStocks() {
             const searchValue = document.getElementById('searchStock').value.toLowerCase();
@@ -1642,21 +1768,166 @@
             });
         }
 
-        function checkLowStock() {
-            const lowStocks = stocks.filter(stock => stock.quantity < 10 && stock.quantity > 0);
-            const alertDiv = document.getElementById('lowStockAlert');
-            const messageDiv = document.getElementById('lowStockMessage');
-            
-            if (!alertDiv || !messageDiv) return;
-            
-            if (lowStocks.length > 0) {
-                const message = lowStocks.map(stock => `${stock.name} (${stock.quantity})`).join(', ');
-                messageDiv.textContent = `Stok berikut menipis: ${message}`;
-                alertDiv.classList.remove('hidden');
-            } else {
-                alertDiv.classList.add('hidden');
-            }
+
+// Tambahkan fungsi-fungsi ini di dalam tag <script>
+
+// Fungsi cek stok kosong (quantity = 0)
+function checkEmptyStock() {
+    const emptyStockAlert = document.getElementById('emptyStockAlert');
+    const emptyStockList = document.getElementById('emptyStockList');
+    
+    if (!emptyStockAlert || !emptyStockList) return;
+    
+    // Filter item dengan stok = 0
+    const emptyItems = stocks.filter(stock => stock.quantity === 0);
+    
+    if (emptyItems.length > 0) {
+        emptyStockAlert.classList.remove('hidden');
+        
+        let itemsHtml = '<ul class="list-disc list-inside space-y-1">';
+        emptyItems.forEach(item => {
+            itemsHtml += `
+                <li>
+                    <span class="font-semibold">${item.name}</span> 
+                    <span class="text-gray-500">(${item.category})</span> 
+                    - <span class="font-bold text-gray-800">STOK HABIS</span>
+                </li>
+            `;
+        });
+        itemsHtml += '</ul>';
+        
+        emptyStockList.innerHTML = itemsHtml;
+    } else {
+        emptyStockAlert.classList.add('hidden');
+    }
+}
+
+// Fungsi cek stok menipis (quantity < 10 dan > 0)
+function checkLowStock() {
+    const lowStockAlert = document.getElementById('lowStockAlert');
+    const lowStockList = document.getElementById('lowStockList');
+    
+    if (!lowStockAlert || !lowStockList) return;
+    
+    // Filter item dengan stok < 10 tapi TIDAK 0 (agar tidak tumpang tindih dengan empty stock)
+    const lowStockItems = stocks.filter(stock => stock.quantity > 0 && stock.quantity < 10);
+    
+    if (lowStockItems.length > 0) {
+        lowStockAlert.classList.remove('hidden');
+        
+        let itemsHtml = '<ul class="list-disc list-inside space-y-1">';
+        lowStockItems.forEach(item => {
+            itemsHtml += `
+                <li>
+                    <span class="font-semibold">${item.name}</span> 
+                    <span class="text-gray-500">(${item.category})</span> 
+                    - Sisa <span class="font-bold text-red-600">${item.quantity}</span> unit
+                </li>
+            `;
+        });
+        itemsHtml += '</ul>';
+        
+        lowStockList.innerHTML = itemsHtml;
+    } else {
+        lowStockAlert.classList.add('hidden');
+    }
+}
+
+// Modifikasi fungsi loadStocks() untuk memanggil KEDUA fungsi
+function loadStocks() {
+    const stockList = document.getElementById('stockList');
+    if (!stockList) return;
+    
+    if (stocks.length === 0) {
+        stockList.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-gray-400">Belum ada data stok</td></tr>';
+        // Sembunyikan alert jika tidak ada data
+        document.getElementById('emptyStockAlert')?.classList.add('hidden');
+        document.getElementById('lowStockAlert')?.classList.add('hidden');
+        return;
+    }
+
+    let html = '';
+    stocks.forEach((stock) => {
+        let statusClass, statusText;
+        
+        if (stock.quantity === 0) {
+            statusClass = 'bg-gray-100 text-gray-800';
+            statusText = 'Kosong';
+        } else if (stock.quantity < 10) {
+            statusClass = 'bg-red-100 text-red-800';
+            statusText = 'Stok Menipis';
+        } else {
+            statusClass = 'bg-green-100 text-green-800';
+            statusText = 'Stok Aman';
         }
+        
+        let actionColumn = '';
+        if (userRole === 'owner') {
+            actionColumn = `
+                <td class="py-3 px-4">
+                    <button onclick='openEditStockModal(${JSON.stringify(stock).replace(/'/g, "\\'")})'  type="button" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium mr-2">
+                        Edit
+                    </button>
+                    <button onclick='deleteStock(${stock.id})' type="button" class="text-red-500 hover:text-red-700 text-sm font-medium">
+                        <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        Hapus
+                    </button>
+                </td>
+            `;
+        }
+
+        html += `
+            <tr class="border-b border-gray-100 hover:bg-gray-50 stock-row" data-name="${stock.name.toLowerCase()}" data-category="${stock.category.toLowerCase()}">
+                <td class="py-3 px-4">${stock.name}</td>
+                <td class="py-3 px-4">${stock.category}</td>
+                <td class="py-3 px-4 font-semibold">${stock.quantity}</td>
+                <td class="py-3 px-4">Rp ${formatNumber(stock.costPrice)}</td>
+                <td class="py-3 px-4">Rp ${formatNumber(stock.sellPrice)}</td>
+                <td class="py-3 px-4">
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold ${statusClass}">
+                        ${statusText}
+                    </span>
+                </td>
+                ${actionColumn}
+            </tr>
+        `;
+    });
+
+    stockList.innerHTML = html;
+    
+    // Panggil KEDUA fungsi peringatan
+    checkEmptyStock();  // Cek stok = 0
+    checkLowStock();    // Cek stok < 10 dan > 0
+}
+
+// Pastikan juga memanggil kedua fungsi di addStock() dan editStock()
+// Tambahkan di akhir fungsi addStock():
+function addStock(event) {
+    event.preventDefault();
+    // ... kode existing ...
+    loadStocks();
+    checkEmptyStock();  // Tambahkan ini
+    checkLowStock();    // Tambahkan ini
+}
+
+// Tambahkan di akhir fungsi editStock():
+function editStock(event) {
+    event.preventDefault();
+    // ... kode existing ...
+    loadStocks();
+    checkEmptyStock();  // Tambahkan ini
+    checkLowStock();    // Tambahkan ini
+}
+
+// Tambahkan di akhir fungsi deleteStock():
+function deleteStock(id) {
+    // ... kode existing ...
+    loadStocks();
+    checkEmptyStock();  // Tambahkan ini
+    checkLowStock();    // Tambahkan ini
+}
 
         function loadTransactions() {
             const tbody = document.getElementById('transactionHistory');
