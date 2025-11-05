@@ -789,10 +789,6 @@
     <div id="qrisModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden" onclick="handleQrisBackdropClick(event)">
         <div class="bg-white rounded-2xl p-8 max-w-lg w-full mx-4" onclick="event.stopPropagation()">
             <div class="text-center space-y-4">
-                <!-- GoPay Logo -->
-                <div class="flex justify-center mb-4">
-                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/15d5a298-fd64-4224-a3e6-d02d36072dc9.png" alt="GoPay" class="gopay-logo">
-                </div>
                 <div class="w-16 h-16 mx-auto bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
                     <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
@@ -1553,6 +1549,12 @@ function clearCart() {
     
     const qrcodeContainer = document.getElementById('qrcode');
     qrcodeContainer.innerHTML = ''; // Clear previous QR
+    qrcodeContainer.style.width = '100%';
+    qrcodeContainer.style.minHeight = '400px';
+    qrcodeContainer.style.display = 'flex';
+    qrcodeContainer.style.justifyContent = 'center';
+    qrcodeContainer.style.alignItems = 'center';
+    qrcodeContainer.style.padding = '20px';
 
     // PILIHAN 1: Jika Anda punya Static QRIS URL (gambar QR statis)
     if (GOPAY_MERCHANT_CONFIG.staticQRISUrl && GOPAY_MERCHANT_CONFIG.staticQRISUrl.trim() !== "") {
@@ -1568,10 +1570,16 @@ function clearCart() {
         }
         
         const img = document.createElement('img');
-        https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/9d9f2518-918f-4586-a94c-d51731be6826.png;
-        img.style.width = '300px';
-        img.style.height = '300px';
+        img.src = imageUrl;
+        img.style.width = '1000px';
+        img.style.height = '1000px';
         img.style.objectFit = 'contain';
+        img.style.display = 'block';
+        img.style.margin = '0 auto';
+        img.style.border = '2px solid #e5e7eb';
+        img.style.borderRadius = '12px';
+        img.style.padding = '10px';
+        img.style.backgroundColor = '#ffffff';
         img.alt = 'QRIS Code';
         img.onerror = function() {
             qrcodeContainer.innerHTML = '<div class="text-red-500 text-center p-4">❌ Gagal memuat QR Code<br><small>Periksa URL gambar QRIS Anda</small></div>';
