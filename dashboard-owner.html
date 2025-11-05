@@ -143,36 +143,60 @@
             z-index: 100;
         }
 
-        /* QR Code Styling - KOTAK SEMPURNA & NO DOUBLE */
-        #qrcode {
-            width: 300px !important;
-            height: 300px !important;
-            margin: 0 auto !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-        }
+/* QR Code Styling - RESPONSIVE & NO OVERFLOW */
+#qrcode {
+    width: 100% !important;
+    max-width: 300px !important;
+    height: auto !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    padding: 10px !important;
+}
 
-        #qrcode img {
-            display: block !important;
-            margin: 0 auto !important;
-            width: 300px !important;
-            height: 300px !important;
-            max-width: 300px !important;
-            max-height: 300px !important;
-        }
+#qrcode img {
+    display: block !important;
+    margin: 0 auto !important;
+    width: 100% !important;
+    max-width: 280px !important;
+    height: auto !important;
+    object-fit: contain !important;
+}
 
-        #qrcode canvas {
-            display: none !important;
-        }
+#qrcode canvas {
+    display: none !important;
+}
 
-        /* GoPay Logo Style */
-        .gopay-logo {
-            width: 80px;
-            height: auto;
-            margin: 0 auto 10px;
-        }
-    </style>
+/* Mobile responsive */
+@media (max-width: 768px) {
+    #qrcode {
+        max-width: 250px !important;
+        padding: 5px !important;
+    }
+    
+    #qrcode img {
+        max-width: 240px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    #qrcode {
+        max-width: 200px !important;
+    }
+    
+    #qrcode img {
+        max-width: 190px !important;
+    }
+
+    .gopay-logo {
+        width: 80px;
+        height: auto;
+        margin: 0 auto 10px;
+    }
+}
+</style>
 </head>
 <body class="bg-gray-50">
     <div class="sync-indicator" id="syncIndicator" style="display: none;">
@@ -868,8 +892,7 @@
                         </svg>
                         Batal
                     </button>
-                </div>
-                
+                </div>   
             </div>
         </div>
     </div>
@@ -1588,28 +1611,25 @@ function clearCart() {
     
     const qrcodeContainer = document.getElementById('qrcode');
     qrcodeContainer.innerHTML = ''; // Clear previous QR
+    
+    // Reset styling
     qrcodeContainer.style.width = '100%';
-    qrcodeContainer.style.minHeight = 'auto';
+    qrcodeContainer.style.maxWidth = '300px';
+    qrcodeContainer.style.height = 'auto';
     qrcodeContainer.style.display = 'flex';
     qrcodeContainer.style.justifyContent = 'center';
     qrcodeContainer.style.alignItems = 'center';
     qrcodeContainer.style.flexDirection = 'column';
-    
-    // Responsive padding
-    if (window.innerWidth < 768) {
-        qrcodeContainer.style.padding = '5px';
-    } else {
-        qrcodeContainer.style.padding = '20px';
-    }
-    
     qrcodeContainer.style.backgroundColor = '#ffffff';
+    qrcodeContainer.style.padding = '10px';
+    qrcodeContainer.style.overflow = 'hidden';
+    qrcodeContainer.style.margin = '0 auto';
 
-    // PILIHAN 1: Jika Anda punya Static QRIS URL (gambar QR statis)
+    // PILIHAN 1: Static QRIS URL
     if (GOPAY_MERCHANT_CONFIG.staticQRISUrl && GOPAY_MERCHANT_CONFIG.staticQRISUrl.trim() !== "") {
-        // Konversi Google Drive link ke direct image URL jika perlu
         let imageUrl = GOPAY_MERCHANT_CONFIG.staticQRISUrl;
         
-        // Jika link Google Drive, konversi ke format direct
+        // Konversi Google Drive link
         if (imageUrl.includes('drive.google.com')) {
             const fileId = imageUrl.match(/\/d\/(.+?)\//)?.[1] || imageUrl.match(/id=(.+?)(&|$)/)?.[1];
             if (fileId) {
@@ -1620,16 +1640,9 @@ function clearCart() {
         const img = document.createElement('img');
         img.src = imageUrl;
         
-        // Responsive sizing
-        if (window.innerWidth < 768) {
-            // Mobile: 90% of screen width
-            img.style.width = '90vw';
-            img.style.maxWidth = '400px';
-        } else {
-            // Desktop: fixed large size
-            img.style.width = '600px';
-        }
-        
+        // RESPONSIVE SIZING - FIXED
+        img.style.width = '100%';
+        img.style.maxWidth = '280px';
         img.style.height = 'auto';
         img.style.objectFit = 'contain';
         img.style.display = 'block';
@@ -1639,36 +1652,45 @@ function clearCart() {
         img.style.padding = '10px';
         img.style.backgroundColor = '#ffffff';
         img.alt = 'QRIS Code';
+        
         img.onerror = function() {
             qrcodeContainer.innerHTML = '<div class="text-red-500 text-center p-4">❌ Gagal memuat QR Code<br><small>Periksa URL gambar QRIS Anda</small></div>';
         };
+        
         qrcodeContainer.appendChild(img);
     } 
-    // PILIHAN 2: Generate Dynamic QRIS menggunakan library QRCode.js
+    // PILIHAN 2: Dynamic QRIS Generation
     else {
         try {
             const qrisData = generateQRISString(transaction.total, transaction.id);
             
-            // Buat wrapper div untuk QR Code
+            // Buat wrapper dengan ukuran responsif
             const qrWrapper = document.createElement('div');
             qrWrapper.id = 'qr-wrapper';
             qrWrapper.style.display = 'flex';
             qrWrapper.style.justifyContent = 'center';
             qrWrapper.style.alignItems = 'center';
-            qrWrapper.style.width = '300px';
-            qrWrapper.style.height = '300px';
+            qrWrapper.style.width = '100%';
+            qrWrapper.style.maxWidth = '280px';
+            qrWrapper.style.height = 'auto';
+            qrWrapper.style.aspectRatio = '1 / 1'; // Kotak sempurna
             qrWrapper.style.margin = '0 auto';
             qrWrapper.style.backgroundColor = '#fff';
             qrWrapper.style.padding = '10px';
             qrWrapper.style.borderRadius = '8px';
+            qrWrapper.style.overflow = 'hidden';
             
             qrcodeContainer.appendChild(qrWrapper);
             
-            // Generate QR Code dengan library QRCode.js
+            // Hitung ukuran QR berdasarkan lebar container
+            const containerWidth = Math.min(280, window.innerWidth - 100);
+            const qrSize = Math.min(containerWidth - 20, 260);
+            
+            // Generate QR Code dengan ukuran dinamis
             new QRCode(qrWrapper, {
                 text: qrisData,
-                width: 280,
-                height: 280,
+                width: qrSize,
+                height: qrSize,
                 colorDark: "#000000",
                 colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
@@ -1679,8 +1701,7 @@ function clearCart() {
             qrcodeContainer.innerHTML = `
                 <div class="text-red-500 text-center p-4">
                     ❌ Gagal generate QR Code<br>
-                    <small class="text-xs">${error.message}</small><br>
-                    <small class="text-xs mt-2 block">Silakan gunakan Static QRIS URL sebagai gantinya</small>
+                    <small class="text-xs">${error.message}</small>
                 </div>
             `;
         }
