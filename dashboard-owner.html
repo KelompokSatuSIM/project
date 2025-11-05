@@ -1552,49 +1552,329 @@ function clearCart() {
             document.getElementById('receiptModal').classList.add('hidden');
         }
 
-        function addStock(event) {
-            event.preventDefault();
+        // PERBAIKAN FUNGSI ADD STOCK
+function addStock(event) {
+    event.preventDefault();
 
-            const name = document.getElementById('stockName').value;
-            const category = document.getElementById('stockCategory').value;
-            const quantity = parseInt(document.getElementById('stockQuantity').value);
-            
-            let costPrice, sellPrice;
+    const name = document.getElementById('stockName').value.trim();
+    const category = document.getElementById('stockCategory').value;
+    const quantity = parseInt(document.getElementById('stockQuantity').value);
+    
+    // Validasi input
+    if (!name) {
+        alert('Nama barang harus diisi!');
+        return;
+    }
+    
+    if (!category) {
+        alert('Kategori harus dipilih!');
+        return;
+    }
+    
+    if (!quantity || quantity < 1) {
+        alert('Jumlah stok minimal 1!');
+        return;
+    }
+    
+    let costPrice, sellPrice;
+    
+    if (userRole === 'owner') {
+        const costPriceInput = document.getElementById('stockCostPrice');
+        const sellPriceInput = document.getElementById('stockSellPrice');
+        
+        costPrice = parseInt(costPriceInput.value) || 0;
+        sellPrice = parseInt(sellPriceInput.value) || 0;
+        
+        if (costPrice <= 0) {
+            alert('Harga beli harus diisi dan lebih dari 0!');
+            return;
+        }
+        
+        if (sellPrice <= 0) {
+            alert('Harga jual harus diisi dan lebih dari 0!');
+            return;
+        }
+        
+        if (sellPrice < costPrice) {
+            if (!confirm('Harga jual lebih rendah dari harga beli. Yakin ingin melanjutkan?')) {
+                return;
+            }
+        }
+    } else {
+        // Staff mode - harga akan diset oleh owner
+        costPrice = 0;
+        sellPrice = 0;
+    }
+
+    const stockId = Date.now();
+    const stock = {
+        id: stockId,
+        name: name,
+        category: category,
+        quantity: quantity,
+        costPrice: costPrice,
+        sellPrice: sellPrice,
+        addedBy: username,
+        addedDate: new Date().toISOString()
+    };
+
+    showSyncIndicator();
+    
+    database.ref('stocks/' + stockId).set(stock)
+        .then(() => {
+            // Reset form
+            document.getElementById('stockName').value = '';
+            document.getElementById('stockCategory').value = '';
+            document.getElementById('stockQuantity').value = '';
             
             if (userRole === 'owner') {
-                costPrice = parseInt(document.getElementById('stockCostPrice').value) || 0;
-                sellPrice = parseInt(document.getElementById('stockSellPrice').value) || 0;
-            } else {
-                costPrice = 0;
-                sellPrice = 0;
+                document.getElementById('stockCostPrice').value = '';
+                document.getElementById('stockSellPrice').value = '';
             }
-
-            const stock = {
-                id: Date.now(),
-                name,
-                category,
-                quantity,
-                costPrice,
-                sellPrice,
-                addedBy: username,
-                addedDate: new Date().toISOString()
-            };
-
-            showSyncIndicator();
             
-            database.ref('stocks/' + stock.id).set(stock)
-                .then(() => {
-                    event.target.reset();
-                    if (userRole === 'staff') {
-                        alert('Stok berhasil ditambahkan! Owner akan menentukan harga.');
-                    } else {
-                        alert('Stok berhasil ditambahkan!');
-                    }
-                })
-                .catch((error) => {
-                    alert('Error: ' + error.message);
-                });
+            if (userRole === 'staff') {
+                alert('✅ Stok berhasil ditambahkan!\n\nOwner akan menentukan harga jual.');
+            } else {
+                alert('✅ Stok berhasil ditambahkan!');
+            }
+            
+            // Refresh data
+            loadProducts();
+            loadStocks();
+            checkEmptyStock();
+            checkLowStock();
+        })
+        .catch((error) => {
+            console.error('Error adding stock:', error);
+            alert('❌ Gagal menambahkan stok: ' + error.message);
+        });
+}
+
+// PERBAIKAN FUNGSI DELETE STOCK
+function deleteStock(stockId) {
+    console.log('Delete stock called with ID:', stockId);
+    
+    // Validasi role
+    if (userRole !== 'owner') {
+        alert('❌ Hanya owner yang bisa menghapus stok!');
+        return;
+    }
+
+    // Validasi stockId
+    if (!stockId) {
+        alert('❌ ID stok tidak valid!');
+        return;
+    }
+
+    // Cari stock berdasarkan ID
+    const stock = stocks.find(s => s.id === parseInt(stockId));
+    
+    if (!stock) {
+        alert('❌ Stok tidak ditemukan!');
+        console.error('Stock not found with ID:', stockId);
+        return;
+    }
+
+    // Konfirmasi penghapusan
+    if (!confirm(`⚠️ Hapus stok "${stock.name}"?\n\nStok: ${stock.quantity} unit\nHarga: Rp ${formatNumber(stock.sellPrice)}\n\nTindakan ini tidak dapat dibatalkan!`)) {
+        return;
+    }
+
+    showSyncIndicator();
+    
+    // Hapus dari Firebase
+    database.ref('stocks/' + stockId).remove()
+        .then(() => {
+            alert('✅ Stok berhasil dihapus!');
+            
+            // Refresh data
+            loadProducts();
+            loadStocks();
+            checkEmptyStock();
+            checkLowStock();
+        })
+        .catch((error) => {
+            console.error('Error deleting stock:', error);
+            alert('❌ Gagal menghapus stok: ' + error.message);
+        });
+}
+
+// PERBAIKAN FUNGSI LOAD STOCKS - AGAR TOMBOL DELETE BERFUNGSI
+function loadStocks() {
+    const stockList = document.getElementById('stockList');
+    if (!stockList) return;
+    
+    if (stocks.length === 0) {
+        stockList.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-gray-400">Belum ada data stok</td></tr>';
+        // Sembunyikan alert jika tidak ada data
+        const emptyAlert = document.getElementById('emptyStockAlert');
+        const lowAlert = document.getElementById('lowStockAlert');
+        if (emptyAlert) emptyAlert.classList.add('hidden');
+        if (lowAlert) lowAlert.classList.add('hidden');
+        return;
+    }
+
+    let html = '';
+    stocks.forEach((stock) => {
+        let statusClass, statusText;
+        
+        if (stock.quantity === 0) {
+            statusClass = 'bg-gray-100 text-gray-800';
+            statusText = 'Kosong';
+        } else if (stock.quantity < 10) {
+            statusClass = 'bg-red-100 text-red-800';
+            statusText = 'Stok Menipis';
+        } else {
+            statusClass = 'bg-green-100 text-green-800';
+            statusText = 'Stok Aman';
         }
+        
+        let actionColumn = '';
+        if (userRole === 'owner') {
+            // PERBAIKAN: Escape JSON dengan benar dan gunakan data-stock untuk menyimpan info
+            const stockJSON = JSON.stringify(stock).replace(/"/g, '&quot;');
+            
+            actionColumn = `
+                <td class="py-3 px-4">
+                    <button 
+                        onclick='openEditStockModal(${JSON.stringify(stock)})' 
+                        type="button" 
+                        class="text-indigo-600 hover:text-indigo-800 text-sm font-medium mr-3"
+                    >
+                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                        Edit
+                    </button>
+                    <button 
+                        onclick="deleteStock(${stock.id})" 
+                        type="button" 
+                        class="text-red-500 hover:text-red-700 text-sm font-medium"
+                    >
+                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        Hapus
+                    </button>
+                </td>
+            `;
+        }
+
+        html += `
+            <tr class="border-b border-gray-100 hover:bg-gray-50 stock-row" 
+                data-name="${stock.name.toLowerCase()}" 
+                data-category="${stock.category.toLowerCase()}"
+                data-stock-id="${stock.id}">
+                <td class="py-3 px-4">${stock.name}</td>
+                <td class="py-3 px-4">${stock.category}</td>
+                <td class="py-3 px-4 font-semibold">${stock.quantity}</td>
+                <td class="py-3 px-4">Rp ${formatNumber(stock.costPrice)}</td>
+                <td class="py-3 px-4">Rp ${formatNumber(stock.sellPrice)}</td>
+                <td class="py-3 px-4">
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold ${statusClass}">
+                        ${statusText}
+                    </span>
+                </td>
+                ${actionColumn}
+            </tr>
+        `;
+    });
+
+    stockList.innerHTML = html;
+    
+    // Panggil fungsi peringatan
+    checkEmptyStock();
+    checkLowStock();
+}
+
+// PERBAIKAN FUNGSI SAVE EDIT STOCK
+function saveEditStock(event) {
+    event.preventDefault();
+    
+    const id = parseInt(document.getElementById('editStockId').value);
+    const name = document.getElementById('editStockName').value.trim();
+    const category = document.getElementById('editStockCategory').value;
+    const quantity = parseInt(document.getElementById('editStockQuantity').value);
+    const costPrice = parseInt(document.getElementById('editStockCostPrice').value);
+    
+    // Validasi
+    if (!name) {
+        alert('Nama barang harus diisi!');
+        return;
+    }
+    
+    if (!category) {
+        alert('Kategori harus dipilih!');
+        return;
+    }
+    
+    if (quantity < 0) {
+        alert('Jumlah stok tidak boleh negatif!');
+        return;
+    }
+    
+    if (costPrice <= 0) {
+        alert('Harga beli harus lebih dari 0!');
+        return;
+    }
+    
+    let sellPrice;
+    if (userRole === 'owner') {
+        sellPrice = parseInt(document.getElementById('editStockSellPrice').value);
+        
+        if (sellPrice <= 0) {
+            alert('Harga jual harus lebih dari 0!');
+            return;
+        }
+        
+        if (sellPrice < costPrice) {
+            if (!confirm('Harga jual lebih rendah dari harga beli. Yakin ingin melanjutkan?')) {
+                return;
+            }
+        }
+    } else {
+        // Staff tidak bisa edit harga jual
+        sellPrice = Math.round(costPrice * 1.3);
+    }
+    
+    const originalStock = stocks.find(s => s.id === id);
+    
+    if (!originalStock) {
+        alert('❌ Stok tidak ditemukan!');
+        return;
+    }
+    
+    const updatedStock = {
+        id: id,
+        name: name,
+        category: category,
+        quantity: quantity,
+        costPrice: costPrice,
+        sellPrice: sellPrice,
+        addedBy: originalStock.addedBy,
+        addedDate: originalStock.addedDate,
+        lastEditedBy: username,
+        lastEditedDate: new Date().toISOString()
+    };
+    
+    showSyncIndicator();
+    
+    database.ref('stocks/' + id).set(updatedStock)
+        .then(() => {
+            closeEditStockModal();
+            alert('✅ Stok berhasil diupdate!');
+            
+            // Refresh data
+            loadProducts();
+            loadStocks();
+            checkEmptyStock();
+            checkLowStock();
+        })
+        .catch((error) => {
+            console.error('Error updating stock:', error);
+            alert('❌ Gagal mengupdate stok: ' + error.message);
+        });
+}
 
         function openEditStockModal(stock) {
             document.getElementById('editStockId').value = stock.id;
@@ -1900,33 +2180,6 @@ function loadStocks() {
     // Panggil KEDUA fungsi peringatan
     checkEmptyStock();  // Cek stok = 0
     checkLowStock();    // Cek stok < 10 dan > 0
-}
-
-// Pastikan juga memanggil kedua fungsi di addStock() dan editStock()
-// Tambahkan di akhir fungsi addStock():
-function addStock(event) {
-    event.preventDefault();
-    // ... kode existing ...
-    loadStocks();
-    checkEmptyStock();  // Tambahkan ini
-    checkLowStock();    // Tambahkan ini
-}
-
-// Tambahkan di akhir fungsi editStock():
-function editStock(event) {
-    event.preventDefault();
-    // ... kode existing ...
-    loadStocks();
-    checkEmptyStock();  // Tambahkan ini
-    checkLowStock();    // Tambahkan ini
-}
-
-// Tambahkan di akhir fungsi deleteStock():
-function deleteStock(id) {
-    // ... kode existing ...
-    loadStocks();
-    checkEmptyStock();  // Tambahkan ini
-    checkLowStock();    // Tambahkan ini
 }
 
         function loadTransactions() {
