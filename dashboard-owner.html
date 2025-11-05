@@ -93,13 +93,26 @@
         /* PERBAIKAN MODAL QRIS - TAMBAHKAN INI */
 #qrisModal {
     overflow-y: auto !important;
-    padding: 20px 0;
+    padding: 60px 20px 20px !important; /* Tambah padding atas dari 20px jadi 60px */
+    padding-top: 40px !important; /* Tambah padding atas dalam modal */
+}
+/* Jika judul "Transaksi" ada di elemen pertama */
+#qrisModal > div > *:first-child {
+    margin-top: 80px !important;
+    padding-top: 40px !important;
 }
 
+
 #qrisModal > div {
-    max-height: 90vh;
+    max-height: 90vh !important; /* Dari 90vh tetap, tapi ada space atas */
     overflow-y: auto;
     margin: auto;
+    padding: 32px 24px !important; /* Tambah padding dalam dari 24px jadi 32px top */
+}
+
+#qrisModal .w-16 {
+    margin-top: 8px !important; /* Tambah space atas icon */
+    margin-bottom: 16px !important;
 }
 
 /* Styling scrollbar untuk modal */
@@ -171,13 +184,18 @@
 
 /* Mobile responsive */
 @media (max-width: 768px) {
-    #qrcode {
-        max-width: 250px !important;
-        padding: 5px !important;
+    #qrisModal > div {
+        padding-top: 36px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    #qrisModal {
+        padding: 40px 12px 20px !important;
     }
     
-    #qrcode img {
-        max-width: 240px !important;
+    #qrisModal > div {
+        padding: 24px 16px !important;
     }
 }
 
@@ -817,7 +835,24 @@
         <div class="bg-white rounded-3xl w-full max-w-md shadow-2xl transform transition-all" onclick="event.stopPropagation()">
             <!-- Inner Content - All Centered -->
             <div class="p-6 flex flex-col items-center">
-                
+            <div style="text-align: center; padding-top: 50px; margin-bottom: 16px;">
+            <span style="font-size: 16px; color: #475569; font-weight: 500;">Silakan Scan QR Code</span>
+        </div>
+        <div style="background: linear-gradient(to bottom, #f8fafc 0%, #ffffff 100%); padding: 28px 24px 20px; border-bottom: 1px solid #e2e8f0; margin: -24px -24px 24px -24px;">
+            <div style="text-align: center;">
+                <div style="display: inline-block; background: #ED1C24; padding: 8px 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(237, 28, 36, 0.2);">
+                    <span style="color: white; font-size: 20px; font-weight: 700; letter-spacing: 1px;">QRIS</span>
+                </div>
+                <p style="font-size: 12px; color: #64748b; margin: 10px 0 0 0; font-weight: 500;">Indonesian Standard QR Code</p>
+            </div>
+        </div>
+        
+        <!-- Icon QR ungu (yang sudah ada) -->
+        <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-400 rounded-full mx-auto mb-5 flex items-center justify-center shadow-lg">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <!-- SVG QR code icon -->
+            </svg>
+        </div> 
                 <!-- Header Icon -->
                 <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg mb-4">
                     <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
