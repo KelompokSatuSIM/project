@@ -11,7 +11,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     
-    <!-- QRCode.js Library -->
+    <!-- Ganti library QRCode.js dengan versi yang lebih stabil -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     
     <style>
@@ -164,6 +164,13 @@
 
         #qrcode canvas {
             display: none !important;
+        }
+
+        /* GoPay Logo Style */
+        .gopay-logo {
+            width: 80px;
+            height: auto;
+            margin: 0 auto 10px;
         }
     </style>
 </head>
@@ -506,6 +513,7 @@
                             <button onclick="filterTransactions('today')" type="button" class="px-4 py-2 rounded-lg border-2 border-gray-200 text-sm font-medium hover:border-indigo-500 transition-all">Hari Ini</button>
                             <button onclick="filterTransactions('week')" type="button" class="px-4 py-2 rounded-lg border-2 border-gray-200 text-sm font-medium hover:border-indigo-500 transition-all">Minggu Ini</button>
                             <button onclick="filterTransactions('month')" type="button" class="px-4 py-2 rounded-lg border-2 border-gray-200 text-sm font-medium hover:border-indigo-500 transition-all">Bulan Ini</button>
+                            <button onclick="filterTransactions('all')" type="button" class="px-4 py-2 rounded-lg border-2 border-gray-200 text-sm font-medium hover:border-indigo-500 transition-all">Semua</button>
                             
                             <button onclick="exportToCSV()" type="button" class="px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white text-sm font-medium transition-all shadow-md flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -781,6 +789,10 @@
     <div id="qrisModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden" onclick="handleQrisBackdropClick(event)">
         <div class="bg-white rounded-2xl p-8 max-w-lg w-full mx-4" onclick="event.stopPropagation()">
             <div class="text-center space-y-4">
+                <!-- GoPay Logo -->
+                <div class="flex justify-center mb-4">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/15d5a298-fd64-4224-a3e6-d02d36072dc9.png" alt="GoPay" class="gopay-logo">
+                </div>
                 <div class="w-16 h-16 mx-auto bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
                     <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
@@ -788,12 +800,10 @@
                 </div>
 
                 <h3 class="text-2xl font-bold text-gray-800">Pembayaran QRIS</h3>
-                <p class="text-sm text-gray-600">Scan QR Code untuk melakukan pembayaran</p>
-
+                <p class="text-sm text-gray-600">Scan QR Code untuk melakukan pembayaran melalui GoPay atau e-wallet lainnya</p>
                 <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-6 border-2 border-indigo-200">
                     <div id="qrcode" class="bg-white p-4 rounded-lg"></div>
                 </div>
-
                 <div class="bg-gray-50 rounded-lg p-4 space-y-2 text-left">
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-600">Total Pembayaran:</span>
@@ -805,10 +815,9 @@
                     </div>
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-600">Merchant:</span>
-                        <span class="font-medium text-xs text-gray-800">Your Cashier</span>
+                        <span class="font-medium text-xs text-gray-800" id="merchantName">Your Cashier</span>
                     </div>
                 </div>
-
                 <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
                     <div class="flex items-center gap-2 justify-center">
                         <svg class="w-5 h-5 text-yellow-600 pulse-animation" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -816,8 +825,9 @@
                         </svg>
                         <p class="text-sm font-medium text-yellow-800">Menunggu pembayaran QRIS...</p>
                     </div>
+                    <p class="text-xs text-yellow-700 mt-1">⚠️ Pastikan pembeli memasukkan nominal Rp <span id="qrisTotalReminder"></span> secara manual di aplikasi e-wallet.</p>
                 </div>
-
+                </div>
                 <div class="flex gap-3 pt-4">
                     <button onclick="confirmQrisPayment()" type="button" class="flex-1 btn-primary py-3 rounded-lg text-white font-semibold hover:shadow-lg transition-all">
                         Konfirmasi Pembayaran
@@ -909,6 +919,15 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
+        const GOPAY_MERCHANT_CONFIG = {
+            merchantId: "G267087767",        // Ganti dengan Merchant ID Anda
+            merchantName: "BURJO SABUN, WARUNG MAKAN",     // Ganti dengan Nama Toko Anda
+            merchantCity: "Tangerang",                // Ganti dengan Kota Anda
+            merchantPostalCode: "15560",            // Ganti dengan Kode Pos Anda
+            nmid: "ID1025451750893",                // Ganti dengan NMID Anda dari GoPay
+            staticQRISUrl: "https://i.imgur.com/9dVGviw.jpeg"
+        }
+
         let userRole = localStorage.getItem('userRole') || 'owner';
         let username = localStorage.getItem('username') || 'User';
         let cart = [];
@@ -918,6 +937,7 @@
         let transactions = [];
         let users = [];
         let salesChart = null;
+        let currentFilter = 'all'; //semua info
         
         // Variable untuk menyimpan informasi toko
         let storeInfo = {
@@ -1436,32 +1456,209 @@ function clearCart() {
             }
         }
 
+        // ===== FUNGSI GENERATE QRIS STRING =====
+        /**
+         * Generate QRIS String sesuai standar EMV QR Code
+         * Format: [ID][Length][Value]
+         */
+        function generateQRISString(amount, transactionId) {
+            // Payload Format Indicator
+            let qrisString = '000201';
+            
+            // Point of Initiation Method (Dynamic QR)
+            qrisString += '010212';
+            
+            // Merchant Account Information (Tag 26 untuk GoPay/QRIS Indonesia)
+            let merchantInfo = '';
+            merchantInfo += '0014ID.CO.QRIS.WWW'; // Global Unique Identifier
+            merchantInfo += '02' + padLeft(GOPAY_MERCHANT_CONFIG.nmid.length) + GOPAY_MERCHANT_CONFIG.nmid; // NMID
+            merchantInfo += '03' + padLeft(GOPAY_MERCHANT_CONFIG.merchantId.length) + GOPAY_MERCHANT_CONFIG.merchantId; // Merchant PAN
+            
+            qrisString += '26' + padLeft(merchantInfo.length) + merchantInfo;
+            
+            // Merchant Category Code (Retail)
+            qrisString += '52040000';
+            
+            // Transaction Currency (IDR = 360)
+            qrisString += '5303360';
+            
+            // Transaction Amount (jika dynamic)
+            if (amount && amount > 0) {
+                const amountStr = amount.toString();
+                qrisString += '54' + padLeft(amountStr.length) + amountStr;
+            }
+            
+            // Country Code (Indonesia)
+            qrisString += '5802ID';
+            
+            // Merchant Name
+            qrisString += '59' + padLeft(GOPAY_MERCHANT_CONFIG.merchantName.length) + GOPAY_MERCHANT_CONFIG.merchantName;
+            
+            // Merchant City
+            qrisString += '60' + padLeft(GOPAY_MERCHANT_CONFIG.merchantCity.length) + GOPAY_MERCHANT_CONFIG.merchantCity;
+            
+            // Postal Code
+            qrisString += '61' + padLeft(GOPAY_MERCHANT_CONFIG.merchantPostalCode.length) + GOPAY_MERCHANT_CONFIG.merchantPostalCode;
+            
+            // Additional Data (Transaction ID)
+            if (transactionId) {
+                let additionalData = '';
+                additionalData += '05' + padLeft(transactionId.length) + transactionId;
+                qrisString += '62' + padLeft(additionalData.length) + additionalData;
+            }
+
+            // CRC Checksum (akan dihitung)
+            qrisString += '6304';
+            
+            // Calculate CRC16-CCITT
+            const crc = calculateCRC16(qrisString);
+            qrisString += crc;
+            
+            return qrisString;
+        }
+        /**
+         * Pad angka dengan leading zero
+         */
+        function padLeft(num) {
+            return num.toString().padStart(2, '0');
+        }
+
+        /**
+         * Calculate CRC16-CCITT untuk QRIS
+         */
+        function calculateCRC16(str) {
+            let crc = 0xFFFF;
+            const polynomial = 0x1021;
+            
+            for (let i = 0; i < str.length; i++) {
+                crc ^= (str.charCodeAt(i) << 8);
+                
+                for (let j = 0; j < 8; j++) {
+                    if ((crc & 0x8000) !== 0) {
+                        crc = ((crc << 1) ^ polynomial) & 0xFFFF;
+                    } else {
+                        crc = (crc << 1) & 0xFFFF;
+                    }
+                }
+            }
+            
+            return crc.toString(16).toUpperCase().padStart(4, '0');
+        }
+
         function showQrisModal(transaction) {
-            document.getElementById('qrisTotal').textContent = 'Rp ' + formatNumber(transaction.total);
-            document.getElementById('qrisTransactionId').textContent = transaction.id;
+    document.getElementById('qrisTotal').textContent = 'Rp ' + formatNumber(transaction.total);
+    document.getElementById('qrisTransactionId').textContent = transaction.id;
+    document.getElementById('merchantName').textContent = GOPAY_MERCHANT_CONFIG.merchantName;
+    document.getElementById('qrisTotalReminder').textContent = formatNumber(transaction.total);
+    
+    const qrcodeContainer = document.getElementById('qrcode');
+    qrcodeContainer.innerHTML = ''; // Clear previous QR
+
+    // PILIHAN 1: Jika Anda punya Static QRIS URL (gambar QR statis)
+    if (GOPAY_MERCHANT_CONFIG.staticQRISUrl && GOPAY_MERCHANT_CONFIG.staticQRISUrl.trim() !== "") {
+        // Konversi Google Drive link ke direct image URL jika perlu
+        let imageUrl = GOPAY_MERCHANT_CONFIG.staticQRISUrl;
+        
+        // Jika link Google Drive, konversi ke format direct
+        if (imageUrl.includes('drive.google.com')) {
+            const fileId = imageUrl.match(/\/d\/(.+?)\//)?.[1] || imageUrl.match(/id=(.+?)(&|$)/)?.[1];
+            if (fileId) {
+                imageUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+            }
+        }
+        
+        const img = document.createElement('img');
+        https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/9d9f2518-918f-4586-a94c-d51731be6826.png;
+        img.style.width = '300px';
+        img.style.height = '300px';
+        img.style.objectFit = 'contain';
+        img.alt = 'QRIS Code';
+        img.onerror = function() {
+            qrcodeContainer.innerHTML = '<div class="text-red-500 text-center p-4">❌ Gagal memuat QR Code<br><small>Periksa URL gambar QRIS Anda</small></div>';
+        };
+        qrcodeContainer.appendChild(img);
+    } 
+    // PILIHAN 2: Generate Dynamic QRIS menggunakan library QRCode.js
+    else {
+        try {
+            const qrisData = generateQRISString(transaction.total, transaction.id);
             
-            const qrcodeContainer = document.getElementById('qrcode');
-            qrcodeContainer.innerHTML = '';
+            // Buat wrapper div untuk QR Code
+            const qrWrapper = document.createElement('div');
+            qrWrapper.id = 'qr-wrapper';
+            qrWrapper.style.display = 'flex';
+            qrWrapper.style.justifyContent = 'center';
+            qrWrapper.style.alignItems = 'center';
+            qrWrapper.style.width = '300px';
+            qrWrapper.style.height = '300px';
+            qrWrapper.style.margin = '0 auto';
+            qrWrapper.style.backgroundColor = '#fff';
+            qrWrapper.style.padding = '10px';
+            qrWrapper.style.borderRadius = '8px';
             
-            const qrisData = `00020101021126660014ID.CO.QRIS.WWW0114${transaction.id}0215YourCashier520454995303360540${transaction.total}5802ID5913Your Cashier6015Jakarta62070503***6304`;
+            qrcodeContainer.appendChild(qrWrapper);
             
-            new QRCode(qrcodeContainer, {
+            // Generate QR Code dengan library QRCode.js
+            new QRCode(qrWrapper, {
                 text: qrisData,
-                width: 300,
-                height: 300,
+                width: 280,
+                height: 280,
                 colorDark: "#000000",
                 colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
             });
             
-            setTimeout(() => {
-                const canvas = qrcodeContainer.querySelector('canvas');
-                if (canvas) {
-                    canvas.remove();
-                }
-            }, 100);
-            
-            document.getElementById('qrisModal').classList.remove('hidden');
+        } catch (error) {
+            console.error('Error generating QRIS:', error);
+            qrcodeContainer.innerHTML = `
+                <div class="text-red-500 text-center p-4">
+                    ❌ Gagal generate QR Code<br>
+                    <small class="text-xs">${error.message}</small><br>
+                    <small class="text-xs mt-2 block">Silakan gunakan Static QRIS URL sebagai gantinya</small>
+                </div>
+            `;
+        }
+    }
+
+    document.getElementById('qrisModal').classList.remove('hidden');
+    
+    // Auto-hide modal after 5 minutes
+    setTimeout(() => {
+        if (!document.getElementById('qrisModal').classList.contains('hidden')) {
+            alert('Waktu pembayaran habis. Silakan coba lagi.');
+            cancelQrisPayment();
+        }
+    }, 300000); 
+}
+
+        function processTransaction() {
+            if (cart.length === 0) {
+                alert('Keranjang masih kosong!');
+                return;
+            }
+            let total = 0;
+            let profit = 0;
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                const itemCost = item.costPrice * item.quantity;
+                total += itemTotal;
+                profit += (itemTotal - itemCost);
+            });
+
+            currentTransaction = {
+                id: 'TRX' + Date.now(),
+                date: new Date().toISOString(),
+                items: [...cart],
+                total: total,
+                profit: profit,
+                paymentMethod: selectedPaymentMethod,
+                user: username
+            };
+            if (selectedPaymentMethod === 'qris') {
+                showQrisModal(currentTransaction);
+            } else {
+                completeTransaction(currentTransaction);
+            }
         }
 
         function handleQrisBackdropClick(event) {
@@ -1471,17 +1668,21 @@ function clearCart() {
                 }
             }
         }
-
         function confirmQrisPayment() {
-            completeTransaction(currentTransaction);
-            document.getElementById('qrisModal').classList.add('hidden');
+            const confirmed = confirm('Apakah pembayaran sudah berhasil?\n\nPastikan Anda sudah menerima notifikasi pembayaran dari GoPay/e-wallet.');
+            
+            if (confirmed) {
+                completeTransaction(currentTransaction);
+                document.getElementById('qrisModal').classList.add('hidden');
+                alert('✅ Pembayaran QRIS berhasil dikonfirmasi!');
+            }
         }
 
         function cancelQrisPayment() {
             document.getElementById('qrisModal').classList.add('hidden');
             currentTransaction = null;
+            alert('Pembayaran dibatalkan. Keranjang belum dikosongkan.');
         }
-
         function completeTransaction(transaction) {
             showSyncIndicator();
             
@@ -1495,7 +1696,6 @@ function clearCart() {
             });
 
             database.ref('transactions/' + transaction.id).set(transaction);
-
             generateReceipt(transaction);
             clearCart();
             selectPaymentMethod('cash');
@@ -2183,55 +2383,76 @@ function loadStocks() {
 }
 
         function loadTransactions() {
-            const tbody = document.getElementById('transactionHistory');
-            if (!tbody) return;
+    const tbody = document.getElementById('transactionHistory');
+    if (!tbody) return;
+    
+    const isStaff = userRole === 'staff';
+    const colspan = isStaff ? '6' : '7';
+    
+    // Filter transaksi berdasarkan currentFilter
+    let filteredTransactions = transactions;
+    
+    if (currentFilter !== 'all') {
+        const now = new Date();
+        filteredTransactions = transactions.filter(t => {
+            const tDate = new Date(t.date);
             
-            const isStaff = userRole === 'staff';
-            const colspan = isStaff ? '6' : '7';
-            
-            if (transactions.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="${colspan}" class="text-center py-8 text-gray-400">Belum ada transaksi</td></tr>`;
-                return;
+            if (currentFilter === 'today') {
+                return tDate.toDateString() === now.toDateString();
+            } else if (currentFilter === 'week') {
+                const weekAgo = new Date(now);
+                weekAgo.setDate(now.getDate() - 7);
+                return tDate >= weekAgo && tDate <= now;
+            } else if (currentFilter === 'month') {
+                return tDate.getMonth() === now.getMonth() && tDate.getFullYear() === now.getFullYear();
             }
+            return true;  // Fallback untuk 'all'
+        });
+    }
+    
+    if (filteredTransactions.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="${colspan}" class="text-center py-8 text-gray-400">Tidak ada transaksi untuk periode ini</td></tr>`;
+        return;
+    }
 
-            let html = '';
-            transactions.slice().reverse().forEach(transaction => {
-                const paymentMethod = transaction.paymentMethod || 'cash';
-                const paymentBadge = paymentMethod === 'qris' 
-                    ? '<span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-semibold">QRIS</span>'
-                    : '<span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">CASH</span>';
-                
-                const profitColumn = isStaff ? '' : `<td class="py-3 px-4 font-semibold text-green-600">Rp ${formatNumber(transaction.profit)}</td>`;
-                
-                html += `
-                    <tr class="border-b border-gray-100 hover:bg-gray-50">
-                        <td class="py-3 px-4 font-mono text-sm">${transaction.id}</td>
-                        <td class="py-3 px-4 text-sm">${formatDate(transaction.date)}</td>
-                        <td class="py-3 px-4 text-sm">${transaction.items.length} item</td>
-                        <td class="py-3 px-4">${paymentBadge}</td>
-                        <td class="py-3 px-4 font-semibold">Rp ${formatNumber(transaction.total)}</td>
-                        ${profitColumn}
-                        <td class="py-3 px-4">
-                            <button onclick='viewTransactionDetail(${JSON.stringify(transaction).replace(/'/g, "\\'")})'  type="button" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
-                                Detail
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
+    let html = '';
+    filteredTransactions.slice().reverse().forEach(transaction => {
+        const paymentMethod = transaction.paymentMethod || 'cash';
+        const paymentBadge = paymentMethod === 'qris' 
+            ? '<span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-semibold">QRIS</span>'
+            : '<span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">CASH</span>';
+        
+        const profitColumn = isStaff ? '' : `<td class="py-3 px-4 font-semibold text-green-600">Rp ${formatNumber(transaction.profit)}</td>`;
+        
+        html += `
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="py-3 px-4 font-mono text-sm">${transaction.id}</td>
+                <td class="py-3 px-4 text-sm">${formatDate(transaction.date)}</td>
+                <td class="py-3 px-4 text-sm">${transaction.items.length} item</td>
+                <td class="py-3 px-4">${paymentBadge}</td>
+                <td class="py-3 px-4 font-semibold">Rp ${formatNumber(transaction.total)}</td>
+                ${profitColumn}
+                <td class="py-3 px-4">
+                    <button onclick='viewTransactionDetail(${JSON.stringify(transaction).replace(/'/g, "\\'")})'  type="button" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                        Detail
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
 
-            tbody.innerHTML = html;
-            
-            if (isStaff) {
-                const table = tbody.closest('table');
-                if (table) {
-                    const headers = table.querySelectorAll('thead th');
-                    if (headers.length >= 6) {
-                        headers[5].style.display = 'none';
-                    }
-                }
+    tbody.innerHTML = html;
+    
+    if (isStaff) {
+        const table = tbody.closest('table');
+        if (table) {
+            const headers = table.querySelectorAll('thead th');
+            if (headers.length >= 6) {
+                headers[5].style.display = 'none';
             }
         }
+    }
+}
 
         function viewTransactionDetail(transaction) {
             generateReceipt(transaction);
@@ -2460,8 +2681,23 @@ function loadStocks() {
         }
 
         function filterTransactions(period) {
-            alert('Filter: ' + period);
-        }
+    currentFilter = period;  // Simpan filter aktif
+    loadTransactions();      // Reload tabel dengan filter baru
+    
+    // Opsional: Update tampilan tombol aktif (misalnya, ubah warna tombol yang dipilih)
+    const buttons = document.querySelectorAll('#transactionHistory').closest('.bg-white').querySelectorAll('button[onclick*="filterTransactions"]');
+    buttons.forEach(btn => {
+        btn.classList.remove('bg-indigo-500', 'text-white', 'border-indigo-500');
+        btn.classList.add('border-gray-200', 'text-gray-700');
+    });
+    
+    // Cari tombol yang diklik berdasarkan period
+    const activeButton = Array.from(buttons).find(btn => btn.onclick.toString().includes(`'${period}'`));
+    if (activeButton) {
+        activeButton.classList.remove('border-gray-200', 'text-gray-700');
+        activeButton.classList.add('bg-indigo-500', 'text-white', 'border-indigo-500');
+    }
+}
 
         function saveStoreSettings() {
             const settings = {
@@ -2525,6 +2761,23 @@ function loadStocks() {
                 minute: '2-digit'
             });
         }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!localStorage.getItem('isAuthenticated')) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Validasi konfigurasi merchant
+            if (GOPAY_MERCHANT_CONFIG.merchantId === "YOUR_MERCHANT_ID") {
+                console.warn("⚠️ PERINGATAN: Konfigurasi GoPay Merchant belum diisi!");
+                console.warn("Silakan update GOPAY_MERCHANT_CONFIG dengan data merchant Anda.");
+            }
+            
+            initializeApp();
+            loadDataFromFirebase();
+        });
     </script>
 </body>
 </html>
