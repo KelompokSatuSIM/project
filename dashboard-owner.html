@@ -1554,7 +1554,15 @@ function clearCart() {
     qrcodeContainer.style.display = 'flex';
     qrcodeContainer.style.justifyContent = 'center';
     qrcodeContainer.style.alignItems = 'center';
-    qrcodeContainer.style.padding = '10px';
+    qrcodeContainer.style.flexDirection = 'column';
+    
+    // Responsive padding
+    if (window.innerWidth < 768) {
+        qrcodeContainer.style.padding = '5px';
+    } else {
+        qrcodeContainer.style.padding = '20px';
+    }
+    
     qrcodeContainer.style.backgroundColor = '#ffffff';
 
     // PILIHAN 1: Jika Anda punya Static QRIS URL (gambar QR statis)
@@ -1572,8 +1580,17 @@ function clearCart() {
         
         const img = document.createElement('img');
         img.src = imageUrl;
-        img.style.width = '100%';
-        img.style.maxWidth = '600px';
+        
+        // Responsive sizing
+        if (window.innerWidth < 768) {
+            // Mobile: 90% of screen width
+            img.style.width = '90vw';
+            img.style.maxWidth = '400px';
+        } else {
+            // Desktop: fixed large size
+            img.style.width = '600px';
+        }
+        
         img.style.height = 'auto';
         img.style.objectFit = 'contain';
         img.style.display = 'block';
