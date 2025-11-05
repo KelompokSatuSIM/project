@@ -1550,11 +1550,12 @@ function clearCart() {
     const qrcodeContainer = document.getElementById('qrcode');
     qrcodeContainer.innerHTML = ''; // Clear previous QR
     qrcodeContainer.style.width = '100%';
-    qrcodeContainer.style.minHeight = '400px';
+    qrcodeContainer.style.minHeight = 'auto';
     qrcodeContainer.style.display = 'flex';
     qrcodeContainer.style.justifyContent = 'center';
     qrcodeContainer.style.alignItems = 'center';
-    qrcodeContainer.style.padding = '20px';
+    qrcodeContainer.style.padding = '10px';
+    qrcodeContainer.style.backgroundColor = '#ffffff';
 
     // PILIHAN 1: Jika Anda punya Static QRIS URL (gambar QR statis)
     if (GOPAY_MERCHANT_CONFIG.staticQRISUrl && GOPAY_MERCHANT_CONFIG.staticQRISUrl.trim() !== "") {
@@ -1571,8 +1572,9 @@ function clearCart() {
         
         const img = document.createElement('img');
         img.src = imageUrl;
-        img.style.width = '1000px';
-        img.style.height = '1000px';
+        img.style.width = '100%';
+        img.style.maxWidth = '600px';
+        img.style.height = 'auto';
         img.style.objectFit = 'contain';
         img.style.display = 'block';
         img.style.margin = '0 auto';
