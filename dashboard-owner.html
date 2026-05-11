@@ -1,68 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Cashier - Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-    
+
     <!-- Ganti library QRCode.js dengan versi yang lebih stabil -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    
+
     <style>
         .sidebar {
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
+
         .fade-in {
             animation: fadeIn 0.3s ease-out;
         }
-        
+
         @keyframes fade-in {
-    from {
-        opacity: 0;
-        transform: translateX(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
 
         .animate-fade-in {
             animation: fade-in 0.3s ease-out;
         }
-        
+
         .card-hover:hover {
             transform: translateY(-2px);
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
-        
+
         .btn-primary {
             background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
         }
-        
+
         .btn-primary:hover {
             background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
         }
-        
+
         .role-btn-active {
             background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
             color: white;
             box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.25);
         }
-        
+
         .role-btn-inactive {
             background: white;
             color: #4b5563;
             border: 2px solid #e5e7eb;
         }
-        
+
         .role-btn-inactive:hover {
             border-color: rgba(99, 102, 241, 0.5);
         }
@@ -74,14 +76,17 @@
         .menu-item:hover {
             transform: translateX(4px);
         }
-        
+
         @media print {
             body * {
                 visibility: hidden;
             }
-            .print-receipt, .print-receipt * {
+
+            .print-receipt,
+            .print-receipt * {
                 visibility: visible;
             }
+
             .print-receipt {
                 position: absolute;
                 left: 0;
@@ -91,58 +96,71 @@
         }
 
         /* PERBAIKAN MODAL QRIS - TAMBAHKAN INI */
-#qrisModal {
-    overflow-y: auto !important;
-    padding: 60px 20px 20px !important; /* Tambah padding atas dari 20px jadi 60px */
-    padding-top: 40px !important; /* Tambah padding atas dalam modal */
-}
-/* Jika judul "Transaksi" ada di elemen pertama */
-#qrisModal > div > *:first-child {
-    margin-top: 80px !important;
-    padding-top: 40px !important;
-}
+        #qrisModal {
+            overflow-y: auto !important;
+            padding: 60px 20px 20px !important;
+            /* Tambah padding atas dari 20px jadi 60px */
+            padding-top: 40px !important;
+            /* Tambah padding atas dalam modal */
+        }
+
+        /* Jika judul "Transaksi" ada di elemen pertama */
+        #qrisModal>div>*:first-child {
+            margin-top: 80px !important;
+            padding-top: 40px !important;
+        }
 
 
-#qrisModal > div {
-    max-height: 90vh !important; /* Dari 90vh tetap, tapi ada space atas */
-    overflow-y: auto;
-    margin: auto;
-    padding: 32px 24px !important; /* Tambah padding dalam dari 24px jadi 32px top */
-}
+        #qrisModal>div {
+            max-height: 90vh !important;
+            /* Dari 90vh tetap, tapi ada space atas */
+            overflow-y: auto;
+            margin: auto;
+            padding: 32px 24px !important;
+            /* Tambah padding dalam dari 24px jadi 32px top */
+        }
 
-#qrisModal .w-16 {
-    margin-top: 8px !important; /* Tambah space atas icon */
-    margin-bottom: 16px !important;
-}
+        #qrisModal .w-16 {
+            margin-top: 8px !important;
+            /* Tambah space atas icon */
+            margin-bottom: 16px !important;
+        }
 
-/* Styling scrollbar untuk modal */
-#qrisModal > div::-webkit-scrollbar {
-    width: 8px;
-}
+        /* Styling scrollbar untuk modal */
+        #qrisModal>div::-webkit-scrollbar {
+            width: 8px;
+        }
 
-#qrisModal > div::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
-}
+        #qrisModal>div::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
 
-#qrisModal > div::-webkit-scrollbar-thumb {
-    background: #6366f1;
-    border-radius: 10px;
-}
+        #qrisModal>div::-webkit-scrollbar-thumb {
+            background: #6366f1;
+            border-radius: 10px;
+        }
 
-#qrisModal > div::-webkit-scrollbar-thumb:hover {
-    background: #4f46e5;
-}
+        #qrisModal>div::-webkit-scrollbar-thumb:hover {
+            background: #4f46e5;
+        }
 
-/* Pastikan tombol tetap terlihat */
-#qrisModal button {
-    position: relative;
-    z-index: 10;
-}
+        /* Pastikan tombol tetap terlihat */
+        #qrisModal button {
+            position: relative;
+            z-index: 10;
+        }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
         }
 
         .pulse-animation {
@@ -156,90 +174,100 @@
             z-index: 100;
         }
 
-/* QR Code Styling - RESPONSIVE & NO OVERFLOW */
-#qrcode {
-    width: 100% !important;
-    max-width: 300px !important;
-    height: auto !important;
-    margin: 0 auto !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    overflow: hidden !important;
-    padding: 10px !important;
-}
+        /* QR Code Styling - RESPONSIVE & NO OVERFLOW */
+        #qrcode {
+            width: 100% !important;
+            max-width: 300px !important;
+            height: auto !important;
+            margin: 0 auto !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            overflow: hidden !important;
+            padding: 10px !important;
+        }
 
-#qrcode img {
-    display: block !important;
-    margin: 0 auto !important;
-    width: 100% !important;
-    max-width: 280px !important;
-    height: auto !important;
-    object-fit: contain !important;
-}
+        #qrcode img {
+            display: block !important;
+            margin: 0 auto !important;
+            width: 100% !important;
+            max-width: 280px !important;
+            height: auto !important;
+            object-fit: contain !important;
+        }
 
-#qrcode canvas {
-    display: none !important;
-}
+        #qrcode canvas {
+            display: none !important;
+        }
 
-/* Mobile responsive */
-@media (max-width: 768px) {
-    #qrisModal > div {
-        padding-top: 36px !important;
-    }
-}
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            #qrisModal>div {
+                padding-top: 36px !important;
+            }
+        }
 
-@media (max-width: 480px) {
-    #qrisModal {
-        padding: 40px 12px 20px !important;
-    }
-    
-    #qrisModal > div {
-        padding: 24px 16px !important;
-    }
-}
+        @media (max-width: 480px) {
+            #qrisModal {
+                padding: 40px 12px 20px !important;
+            }
 
-@media (max-width: 480px) {
-    #qrcode {
-        max-width: 200px !important;
-    }
-    
-    #qrcode img {
-        max-width: 190px !important;
-    }
+            #qrisModal>div {
+                padding: 24px 16px !important;
+            }
+        }
 
-    .gopay-logo {
-        width: 80px;
-        height: auto;
-        margin: 0 auto 10px;
-    }
-}
-</style>
+        @media (max-width: 480px) {
+            #qrcode {
+                max-width: 200px !important;
+            }
+
+            #qrcode img {
+                max-width: 190px !important;
+            }
+
+            .gopay-logo {
+                width: 80px;
+                height: auto;
+                margin: 0 auto 10px;
+            }
+        }
+    </style>
 </head>
+
 <body class="bg-gray-50">
     <div class="sync-indicator" id="syncIndicator" style="display: none;">
         <div class="bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
             <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                </path>
             </svg>
             <span class="text-sm font-medium">Syncing...</span>
         </div>
     </div>
 
-    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 hidden transition-opacity duration-300" onclick="closeSidebar()"></div>
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 hidden transition-opacity duration-300"
+        onclick="closeSidebar()"></div>
 
-    <div id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-gradient-to-b from-indigo-600 to-purple-700 text-white shadow-2xl z-50" style="transform: translateX(-100%);">
+    <div id="sidebar"
+        class="sidebar fixed left-0 top-0 h-full w-64 bg-gradient-to-b from-indigo-600 to-purple-700 text-white shadow-2xl z-50"
+        style="transform: translateX(-100%);">
         <div class="p-6 border-b border-white/20 relative">
-            <button onclick="closeSidebar()" type="button" class="absolute top-4 right-4 text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-lg transition-all z-10">
+            <button onclick="closeSidebar()" type="button"
+                class="absolute top-4 right-4 text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-lg transition-all z-10">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12">
+                    </path>
                 </svg>
             </button>
 
             <div class="flex items-center gap-3 pr-10">
                 <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                        </path>
                     </svg>
                 </div>
                 <div>
@@ -250,40 +278,60 @@
         </div>
 
         <nav class="p-4 space-y-2">
-            <button onclick="showSection('transaction')" class="menu-item w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-all bg-white/20" id="menu-transaction" type="button">
+            <button onclick="showSection('transaction')"
+                class="menu-item w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-all bg-white/20"
+                id="menu-transaction" type="button">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                    </path>
                 </svg>
                 <span class="font-medium">Transaksi</span>
             </button>
 
-            <button onclick="showSection('report')" class="menu-item w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-all" id="menu-report" type="button">
+            <button onclick="showSection('report')"
+                class="menu-item w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-all"
+                id="menu-report" type="button">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                    </path>
                 </svg>
                 <span class="font-medium">Laporan Keuangan</span>
             </button>
 
-            <button onclick="showSection('stock')" class="menu-item w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-all" id="menu-stock" type="button">
+            <button onclick="showSection('stock')"
+                class="menu-item w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-all"
+                id="menu-stock" type="button">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                 </svg>
                 <span class="font-medium">Manajemen Stok</span>
             </button>
 
-            <button onclick="showSection('settings')" class="menu-item w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-all" id="menu-settings" type="button">
+            <button onclick="showSection('settings')"
+                class="menu-item w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-all"
+                id="menu-settings" type="button">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                    </path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                 </svg>
                 <span class="font-medium">Pengaturan</span>
             </button>
         </nav>
 
         <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-white/20">
-            <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-all text-red-300 hover:text-red-200" type="button">
+            <button onclick="logout()"
+                class="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-all text-red-300 hover:text-red-200"
+                type="button">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                    </path>
                 </svg>
                 <span class="font-medium">Logout</span>
             </button>
@@ -294,24 +342,26 @@
         <header class="bg-white shadow-sm sticky top-0 z-30">
             <div class="px-4 md:px-8 py-4 flex items-center justify-between">
                 <div class="flex items-center gap-4">
-                    <button onclick="openSidebar()" type="button" class="flex flex-col gap-1.5 p-2.5 rounded-lg hover:bg-indigo-50 transition-all">
+                    <button onclick="openSidebar()" type="button"
+                        class="flex flex-col gap-1.5 p-2.5 rounded-lg hover:bg-indigo-50 transition-all">
                         <div class="w-7 h-0.5 bg-gray-700 rounded-full"></div>
                         <div class="w-7 h-0.5 bg-gray-700 rounded-full"></div>
                         <div class="w-7 h-0.5 bg-gray-700 rounded-full"></div>
                     </button>
-                    
+
                     <div>
                         <h2 class="text-xl md:text-2xl font-bold text-gray-800" id="pageTitle">Transaksi</h2>
                         <p class="text-xs md:text-sm text-gray-500" id="pageSubtitle">Kelola transaksi penjualan</p>
                     </div>
                 </div>
-                
+
                 <div class="flex items-center gap-4">
                     <div class="text-right hidden md:block">
                         <p class="text-sm text-gray-600">Welcome back,</p>
                         <p class="font-semibold text-gray-800" id="usernameDisplay">Loading...</p>
                     </div>
-                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold shadow-lg">
+                    <div
+                        class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold shadow-lg">
                         <span id="userInitial">U</span>
                     </div>
                 </div>
@@ -324,11 +374,12 @@
                     <div class="lg:col-span-2">
                         <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
                             <h3 class="text-lg font-bold text-gray-800 mb-4">Input Transaksi</h3>
-                            
+
                             <div class="space-y-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Pilih Produk</label>
-                                    <select id="productSelect" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
+                                    <select id="productSelect"
+                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
                                         <option value="">-- Pilih Produk --</option>
                                     </select>
                                 </div>
@@ -336,15 +387,18 @@
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Jumlah</label>
-                                        <input type="number" id="productQuantity" min="1" value="1" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
+                                        <input type="number" id="productQuantity" min="1" value="1"
+                                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Harga Satuan</label>
-                                        <input type="text" id="productPrice" readonly class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50">
+                                        <input type="text" id="productPrice" readonly
+                                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50">
                                     </div>
                                 </div>
 
-                                <button onclick="addToCart()" type="button" class="btn-primary w-full py-3 rounded-lg text-white font-semibold hover:shadow-lg transition-all">
+                                <button onclick="addToCart()" type="button"
+                                    class="btn-primary w-full py-3 rounded-lg text-white font-semibold hover:shadow-lg transition-all">
                                     Tambah ke Keranjang
                                 </button>
                             </div>
@@ -359,26 +413,22 @@
                             <div class="mt-6 pt-6 border-t-2 border-gray-100">
                                 <label class="block text-sm font-semibold text-gray-800 mb-3">Metode Pembayaran</label>
                                 <div class="grid grid-cols-2 gap-3">
-                                    <button 
-                                        type="button"
-                                        id="cashBtn"
-                                        onclick="selectPaymentMethod('cash')"
-                                        class="role-btn-active h-auto py-4 flex flex-col items-center gap-2 rounded-xl font-semibold text-sm transition-all duration-300"
-                                    >
+                                    <button type="button" id="cashBtn" onclick="selectPaymentMethod('cash')"
+                                        class="role-btn-active h-auto py-4 flex flex-col items-center gap-2 rounded-xl font-semibold text-sm transition-all duration-300">
                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z">
+                                            </path>
                                         </svg>
                                         <span>Cash</span>
                                     </button>
-                                    
-                                    <button 
-                                        type="button"
-                                        id="qrisBtn"
-                                        onclick="selectPaymentMethod('qris')"
-                                        class="role-btn-inactive h-auto py-4 flex flex-col items-center gap-2 rounded-xl font-semibold text-sm transition-all duration-300"
-                                    >
+
+                                    <button type="button" id="qrisBtn" onclick="selectPaymentMethod('qris')"
+                                        class="role-btn-inactive h-auto py-4 flex flex-col items-center gap-2 rounded-xl font-semibold text-sm transition-all duration-300">
                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z">
+                                            </path>
                                         </svg>
                                         <span>QRIS</span>
                                     </button>
@@ -390,7 +440,7 @@
                     <div class="lg:col-span-1">
                         <div class="bg-white rounded-2xl shadow-sm p-6 sticky top-24 border border-gray-100">
                             <h3 class="text-lg font-bold text-gray-800 mb-4">Ringkasan</h3>
-                            
+
                             <div class="space-y-3 mb-6">
                                 <div class="flex justify-between text-sm">
                                     <span class="text-gray-600">Subtotal</span>
@@ -408,19 +458,25 @@
                                 </div>
                                 <div class="mt-3 pt-3 border-t border-gray-100">
                                     <div class="flex items-center gap-2 text-sm bg-gray-50 rounded-lg p-3">
-                                        <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                        <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z">
+                                            </path>
                                         </svg>
-                                        <span class="text-gray-600">Metode: <span class="font-semibold text-gray-800" id="selectedPaymentDisplay">Cash</span></span>
+                                        <span class="text-gray-600">Metode: <span class="font-semibold text-gray-800"
+                                                id="selectedPaymentDisplay">Cash</span></span>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="space-y-3">
-                                <button onclick="processTransaction()" type="button" class="btn-primary w-full py-4 rounded-lg text-white font-semibold hover:shadow-xl transition-all">
+                                <button onclick="processTransaction()" type="button"
+                                    class="btn-primary w-full py-4 rounded-lg text-white font-semibold hover:shadow-xl transition-all">
                                     Proses Transaksi
                                 </button>
-                                <button onclick="clearCart()" type="button" class="w-full py-3 rounded-lg border-2 border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 transition-all">
+                                <button onclick="clearCart()" type="button"
+                                    class="w-full py-3 rounded-lg border-2 border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 transition-all">
                                     Bersihkan
                                 </button>
                             </div>
@@ -429,11 +485,14 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white card-hover transition-all">
+                    <div
+                        class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white card-hover transition-all">
                         <div class="flex items-center justify-between mb-4">
                             <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                    </path>
                                 </svg>
                             </div>
                         </div>
@@ -441,11 +500,14 @@
                         <p class="text-3xl font-bold mt-2" id="totalSales">Rp 0</p>
                     </div>
 
-                    <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-6 text-white card-hover transition-all">
+                    <div
+                        class="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-6 text-white card-hover transition-all">
                         <div class="flex items-center justify-between mb-4">
                             <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                    </path>
                                 </svg>
                             </div>
                         </div>
@@ -453,11 +515,13 @@
                         <p class="text-3xl font-bold mt-2" id="totalTransactions">0</p>
                     </div>
 
-                    <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-6 text-white card-hover transition-all">
+                    <div
+                        class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-6 text-white card-hover transition-all">
                         <div class="flex items-center justify-between mb-4">
                             <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                                 </svg>
                             </div>
                         </div>
@@ -473,7 +537,9 @@
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-sm text-gray-600">Total Pendapatan</span>
                             <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                </path>
                             </svg>
                         </div>
                         <p class="text-2xl font-bold text-gray-800" id="analyticsRevenue">Rp 0</p>
@@ -484,7 +550,9 @@
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-sm text-gray-600">Total Cash</span>
                             <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z">
+                                </path>
                             </svg>
                         </div>
                         <p class="text-2xl font-bold text-gray-800" id="analyticsCash">Rp 0</p>
@@ -495,7 +563,9 @@
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-sm text-gray-600">Total QRIS</span>
                             <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z">
+                                </path>
                             </svg>
                         </div>
                         <p class="text-2xl font-bold text-gray-800" id="analyticsQris">Rp 0</p>
@@ -506,7 +576,8 @@
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-sm text-gray-600">Total Keuntungan</span>
                             <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                             </svg>
                         </div>
                         <p class="text-2xl font-bold text-gray-800" id="analyticsProfit">Rp 0</p>
@@ -517,7 +588,9 @@
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-sm text-gray-600">Rata-rata/Transaksi</span>
                             <svg class="w-5 h-5 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z">
+                                </path>
                             </svg>
                         </div>
                         <p class="text-2xl font-bold text-gray-800" id="analyticsAverage">Rp 0</p>
@@ -531,16 +604,20 @@
                         <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
                             <div class="flex items-center gap-2">
                                 <label class="text-sm font-medium text-gray-700 whitespace-nowrap">Dari:</label>
-                                <input type="date" id="chartStartDate" class="px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500 text-sm">
+                                <input type="date" id="chartStartDate"
+                                    class="px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500 text-sm">
                             </div>
                             <div class="flex items-center gap-2">
                                 <label class="text-sm font-medium text-gray-700 whitespace-nowrap">Sampai:</label>
-                                <input type="date" id="chartEndDate" class="px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500 text-sm">
+                                <input type="date" id="chartEndDate"
+                                    class="px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500 text-sm">
                             </div>
-                            <button onclick="updateChartByDateRange()" type="button" class="btn-primary px-4 py-2 rounded-lg text-white text-sm font-medium hover:shadow-lg transition-all whitespace-nowrap">
+                            <button onclick="updateChartByDateRange()" type="button"
+                                class="btn-primary px-4 py-2 rounded-lg text-white text-sm font-medium hover:shadow-lg transition-all whitespace-nowrap">
                                 Terapkan
                             </button>
-                            <button onclick="resetChartDateRange()" type="button" class="px-4 py-2 rounded-lg border-2 border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-all whitespace-nowrap">
+                            <button onclick="resetChartDateRange()" type="button"
+                                class="px-4 py-2 rounded-lg border-2 border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-all whitespace-nowrap">
                                 Reset
                             </button>
                         </div>
@@ -552,20 +629,33 @@
                     <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
                         <h3 class="text-lg font-bold text-gray-800">Riwayat Transaksi</h3>
                         <div class="flex gap-2 flex-wrap">
-                            <button onclick="filterTransactions('today')" type="button" class="px-4 py-2 rounded-lg border-2 border-gray-200 text-sm font-medium hover:border-indigo-500 transition-all">Hari Ini</button>
-                            <button onclick="filterTransactions('week')" type="button" class="px-4 py-2 rounded-lg border-2 border-gray-200 text-sm font-medium hover:border-indigo-500 transition-all">Minggu Ini</button>
-                            <button onclick="filterTransactions('month')" type="button" class="px-4 py-2 rounded-lg border-2 border-gray-200 text-sm font-medium hover:border-indigo-500 transition-all">Bulan Ini</button>
-                            <button onclick="filterTransactions('all')" type="button" class="px-4 py-2 rounded-lg border-2 border-gray-200 text-sm font-medium hover:border-indigo-500 transition-all">Semua</button>
-                            
-                            <button onclick="exportToCSV()" type="button" class="px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white text-sm font-medium transition-all shadow-md flex items-center gap-2">
+                            <button onclick="filterTransactions('today')" type="button"
+                                class="px-4 py-2 rounded-lg border-2 border-gray-200 text-sm font-medium hover:border-indigo-500 transition-all">Hari
+                                Ini</button>
+                            <button onclick="filterTransactions('week')" type="button"
+                                class="px-4 py-2 rounded-lg border-2 border-gray-200 text-sm font-medium hover:border-indigo-500 transition-all">Minggu
+                                Ini</button>
+                            <button onclick="filterTransactions('month')" type="button"
+                                class="px-4 py-2 rounded-lg border-2 border-gray-200 text-sm font-medium hover:border-indigo-500 transition-all">Bulan
+                                Ini</button>
+                            <button onclick="filterTransactions('all')" type="button"
+                                class="px-4 py-2 rounded-lg border-2 border-gray-200 text-sm font-medium hover:border-indigo-500 transition-all">Semua</button>
+
+                            <button onclick="exportToCSV()" type="button"
+                                class="px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white text-sm font-medium transition-all shadow-md flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                    </path>
                                 </svg>
                                 CSV
                             </button>
-                            <button onclick="exportToExcel()" type="button" class="px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium transition-all shadow-md flex items-center gap-2">
+                            <button onclick="exportToExcel()" type="button"
+                                class="px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium transition-all shadow-md flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z">
+                                    </path>
                                 </svg>
                                 Excel
                             </button>
@@ -586,7 +676,9 @@
                                 </tr>
                             </thead>
                             <tbody id="transactionHistory">
-                                <tr><td colspan="7" class="text-center py-8 text-gray-400">Belum ada transaksi</td></tr>
+                                <tr>
+                                    <td colspan="7" class="text-center py-8 text-gray-400">Belum ada transaksi</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -596,60 +688,72 @@
             <div id="section-stock" class="fade-in hidden">
                 <!-- Tambahkan kedua section ini di dashboard-owner.html, di atas tabel stok -->
 
-<!-- Peringatan Stok Kosong -->
-<div id="emptyStockAlert" class="hidden bg-gray-50 border-l-4 border-gray-600 p-4 mb-4 rounded-lg shadow-sm">
-    <div class="flex items-start">
-        <div class="flex-shrink-0">
-            <svg class="h-6 w-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-            </svg>
-        </div>
-        <div class="ml-3 flex-1">
-            <h3 class="text-sm font-bold text-gray-800 mb-2">⚠️ Stok Kosong!</h3>
-            <div id="emptyStockList" class="text-sm text-gray-700"></div>
-        </div>
-        <button onclick="document.getElementById('emptyStockAlert').classList.add('hidden')" class="flex-shrink-0 ml-4 text-gray-400 hover:text-gray-600">
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-        </button>
-    </div>
-</div>
+                <!-- Peringatan Stok Kosong -->
+                <div id="emptyStockAlert"
+                    class="hidden bg-gray-50 border-l-4 border-gray-600 p-4 mb-4 rounded-lg shadow-sm">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <svg class="h-6 w-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <h3 class="text-sm font-bold text-gray-800 mb-2">⚠️ Stok Kosong!</h3>
+                            <div id="emptyStockList" class="text-sm text-gray-700"></div>
+                        </div>
+                        <button onclick="document.getElementById('emptyStockAlert').classList.add('hidden')"
+                            class="flex-shrink-0 ml-4 text-gray-400 hover:text-gray-600">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
 
-<!-- Peringatan Stok Menipis -->
-<div id="lowStockAlert" class="hidden bg-red-50 border-l-4 border-red-500 p-4 mb-4 rounded-lg shadow-sm">
-    <div class="flex items-start">
-        <div class="flex-shrink-0">
-            <svg class="h-6 w-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-            </svg>
-        </div>
-        <div class="ml-3 flex-1">
-            <h3 class="text-sm font-bold text-red-800 mb-2">⚠️ Stok Menipis!</h3>
-            <div id="lowStockList" class="text-sm text-red-700"></div>
-        </div>
-        <button onclick="document.getElementById('lowStockAlert').classList.add('hidden')" class="flex-shrink-0 ml-4 text-red-400 hover:text-red-600">
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-        </button>
-    </div>
-</div>
+                <!-- Peringatan Stok Menipis -->
+                <div id="lowStockAlert"
+                    class="hidden bg-red-50 border-l-4 border-red-500 p-4 mb-4 rounded-lg shadow-sm">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <svg class="h-6 w-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <h3 class="text-sm font-bold text-red-800 mb-2">⚠️ Stok Menipis!</h3>
+                            <div id="lowStockList" class="text-sm text-red-700"></div>
+                        </div>
+                        <button onclick="document.getElementById('lowStockAlert').classList.add('hidden')"
+                            class="flex-shrink-0 ml-4 text-red-400 hover:text-red-600">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="lg:col-span-1">
                         <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
                             <h3 class="text-lg font-bold text-gray-800 mb-4">Tambah Stok Barang</h3>
-                            
+
                             <form onsubmit="addStock(event)" class="space-y-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Nama Barang</label>
-                                    <input type="text" id="stockName" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
+                                    <input type="text" id="stockName" required
+                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
                                 </div>
 
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Kategori</label>
-                                    <select id="stockCategory" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
+                                    <select id="stockCategory" required
+                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
                                         <option value="">-- Pilih Kategori --</option>
                                         <option value="Makanan">Makanan</option>
                                         <option value="Minuman">Minuman</option>
@@ -659,20 +763,25 @@
 
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Jumlah Stok</label>
-                                    <input type="number" id="stockQuantity" min="1" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
+                                    <input type="number" id="stockQuantity" min="1" required
+                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
                                 </div>
 
                                 <div id="costPriceField">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Harga Beli (Modal)</label>
-                                    <input type="number" id="stockCostPrice" min="0" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Harga Beli
+                                        (Modal)</label>
+                                    <input type="number" id="stockCostPrice" min="0"
+                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
                                 </div>
 
                                 <div id="sellPriceField">
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Harga Jual</label>
-                                    <input type="number" id="stockSellPrice" min="0" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
+                                    <input type="number" id="stockSellPrice" min="0"
+                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
                                 </div>
 
-                                <button type="submit" class="btn-primary w-full py-3 rounded-lg text-white font-semibold hover:shadow-lg transition-all">
+                                <button type="submit"
+                                    class="btn-primary w-full py-3 rounded-lg text-white font-semibold hover:shadow-lg transition-all">
                                     Tambah Stok
                                 </button>
                             </form>
@@ -683,17 +792,15 @@
                         <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
                             <div class="flex items-center justify-between mb-4">
                                 <h3 class="text-lg font-bold text-gray-800">Daftar Stok Barang</h3>
-                                
+
                                 <div class="relative">
-                                    <input 
-                                        type="text" 
-                                        id="searchStock" 
-                                        placeholder="Cari stok..." 
+                                    <input type="text" id="searchStock" placeholder="Cari stok..."
                                         oninput="searchStocks()"
-                                        class="pl-10 pr-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500 text-sm"
-                                    >
-                                    <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                        class="pl-10 pr-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500 text-sm">
+                                    <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"
+                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                     </svg>
                                 </div>
                             </div>
@@ -702,17 +809,27 @@
                                 <table class="w-full">
                                     <thead>
                                         <tr class="border-b-2 border-gray-100 bg-gray-50">
-                                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Nama</th>
-                                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Kategori</th>
-                                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Stok</th>
-                                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Harga Beli</th>
-                                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Harga Jual</th>
-                                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Status</th>
-                                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700" id="actionHeader">Aksi</th>
+                                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Nama
+                                            </th>
+                                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Kategori
+                                            </th>
+                                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Stok
+                                            </th>
+                                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Harga
+                                                Beli</th>
+                                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Harga
+                                                Jual</th>
+                                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Status
+                                            </th>
+                                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700"
+                                                id="actionHeader">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody id="stockList">
-                                        <tr><td colspan="7" class="text-center py-8 text-gray-400">Belum ada data stok</td></tr>
+                                        <tr>
+                                            <td colspan="7" class="text-center py-8 text-gray-400">Belum ada data stok
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -726,36 +843,43 @@
                     <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
                         <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
                             <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z">
+                                </path>
                             </svg>
                             Tambah Akun Baru
                         </h3>
                         <form onsubmit="addNewUser(event)" class="space-y-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
-                                <input type="text" id="newUsername" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
+                                <input type="text" id="newUsername" required
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
                             </div>
 
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                                <input type="password" id="newUserPassword" required minlength="6" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
+                                <input type="password" id="newUserPassword" required minlength="6"
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
                             </div>
 
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
-                                <input type="text" id="newUserFullName" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
+                                <input type="text" id="newUserFullName" required
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
                             </div>
 
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
-                                <select id="newUserRole" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
+                                <select id="newUserRole" required
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
                                     <option value="">-- Pilih Role --</option>
                                     <option value="owner">Owner (Full Access)</option>
                                     <option value="staff">Staff (Limited Access)</option>
                                 </select>
                             </div>
 
-                            <button type="submit" class="btn-primary w-full py-3 rounded-lg text-white font-semibold hover:shadow-lg transition-all">
+                            <button type="submit"
+                                class="btn-primary w-full py-3 rounded-lg text-white font-semibold hover:shadow-lg transition-all">
                                 Tambah Akun
                             </button>
                         </form>
@@ -766,17 +890,21 @@
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Nama Toko</label>
-                                <input type="text" id="storeName" value="Your Cashier Store" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
+                                <input type="text" id="storeName" value="Your Cashier Store"
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Alamat</label>
-                                <textarea id="storeAddress" rows="3" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">Jl. Contoh No. 123</textarea>
+                                <textarea id="storeAddress" rows="3"
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">Jl. Contoh No. 123</textarea>
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Telepon</label>
-                                <input type="tel" id="storePhone" value="0812-3456-7890" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
+                                <input type="tel" id="storePhone" value="0812-3456-7890"
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
                             </div>
-                            <button onclick="saveStoreSettings()" type="button" class="btn-primary w-full py-3 rounded-lg text-white font-semibold hover:shadow-lg transition-all">
+                            <button onclick="saveStoreSettings()" type="button"
+                                class="btn-primary w-full py-3 rounded-lg text-white font-semibold hover:shadow-lg transition-all">
                                 Simpan Pengaturan
                             </button>
                         </div>
@@ -787,17 +915,22 @@
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Password Lama</label>
-                                <input type="password" id="oldPassword" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
+                                <input type="password" id="oldPassword"
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Password Baru</label>
-                                <input type="password" id="newPassword" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
+                                <input type="password" id="newPassword"
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Konfirmasi Password Baru</label>
-                                <input type="password" id="confirmPassword" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Konfirmasi Password
+                                    Baru</label>
+                                <input type="password" id="confirmPassword"
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
                             </div>
-                            <button onclick="changePassword()" type="button" class="btn-primary w-full py-3 rounded-lg text-white font-semibold hover:shadow-lg transition-all">
+                            <button onclick="changePassword()" type="button"
+                                class="btn-primary w-full py-3 rounded-lg text-white font-semibold hover:shadow-lg transition-all">
                                 Ganti Password
                             </button>
                         </div>
@@ -811,14 +944,17 @@
                             <thead>
                                 <tr class="border-b-2 border-gray-100 bg-gray-50">
                                     <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Username</th>
-                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Nama Lengkap</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Nama Lengkap
+                                    </th>
                                     <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Role</th>
                                     <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Dibuat</th>
                                     <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody id="userList">
-                                <tr><td colspan="5" class="text-center py-8 text-gray-400">Memuat data...</td></tr>
+                                <tr>
+                                    <td colspan="5" class="text-center py-8 text-gray-400">Memuat data...</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -828,120 +964,146 @@
     </div>
 
     <!-- QRIS Modal - PERFECTLY CENTERED -->
-<div id="qrisModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50" onclick="handleQrisBackdropClick(event)">
-    <!-- Centering Container -->
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <!-- Modal Content -->
-        <div class="bg-white rounded-3xl w-full max-w-md shadow-2xl transform transition-all" onclick="event.stopPropagation()">
-            <!-- Inner Content - All Centered -->
-            <div class="p-6 flex flex-col items-center">
-            <div style="text-align: center; padding-top: 50px; margin-bottom: 16px;">
-            <span style="font-size: 16px; color: #475569; font-weight: 500;">Silakan Scan QR Code</span>
-        </div>
-        <div style="background: linear-gradient(to bottom, #f8fafc 0%, #ffffff 100%); padding: 28px 24px 20px; border-bottom: 1px solid #e2e8f0; margin: -24px -24px 24px -24px;">
-            <div style="text-align: center;">
-                <div style="display: inline-block; background: #ED1C24; padding: 8px 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(237, 28, 36, 0.2);">
-                    <span style="color: white; font-size: 20px; font-weight: 700; letter-spacing: 1px;">QRIS</span>
-                </div>
-                <p style="font-size: 12px; color: #64748b; margin: 10px 0 0 0; font-weight: 500;">Indonesian Standard QR Code</p>
-            </div>
-        </div>
-        
-        <!-- Icon QR ungu (yang sudah ada) -->
-        <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-400 rounded-full mx-auto mb-5 flex items-center justify-center shadow-lg">
-            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <!-- SVG QR code icon -->
-            </svg>
-        </div> 
-                <!-- Header Icon -->
-                <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg mb-4">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
-                    </svg>
-                </div>
-                
-                <!-- Title -->
-                <h3 class="text-2xl font-bold text-center bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
-                    Pembayaran QRIS
-                </h3>
-                
-                <!-- Description -->
-                <p class="text-sm text-gray-600 text-center mb-6 px-2">
-                    Scan QR Code untuk melakukan pembayaran melalui GoPay atau e-wallet lainnya
-                </p>
+    <div id="qrisModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50"
+        onclick="handleQrisBackdropClick(event)">
+        <!-- Centering Container -->
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <!-- Modal Content -->
+            <div class="bg-white rounded-3xl w-full max-w-md shadow-2xl transform transition-all"
+                onclick="event.stopPropagation()">
+                <!-- Inner Content - All Centered -->
+                <div class="p-6 flex flex-col items-center">
+                    <div style="text-align: center; padding-top: 50px; margin-bottom: 16px;">
+                        <span style="font-size: 16px; color: #475569; font-weight: 500;">Silakan Scan QR Code</span>
+                    </div>
+                    <div
+                        style="background: linear-gradient(to bottom, #f8fafc 0%, #ffffff 100%); padding: 28px 24px 20px; border-bottom: 1px solid #e2e8f0; margin: -24px -24px 24px -24px;">
+                        <div style="text-align: center;">
+                            <div
+                                style="display: inline-block; background: #ED1C24; padding: 8px 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(237, 28, 36, 0.2);">
+                                <span
+                                    style="color: white; font-size: 20px; font-weight: 700; letter-spacing: 1px;">QRIS</span>
+                            </div>
+                            <p style="font-size: 12px; color: #64748b; margin: 10px 0 0 0; font-weight: 500;">Indonesian
+                                Standard QR Code</p>
+                        </div>
+                    </div>
 
-                <!-- QR Code Section - CENTERED -->
-                <div class="w-full mb-6">
-                    <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-6 border-2 border-indigo-200">
-                        <!-- QR Code Container with Perfect Centering -->
-                        <div class="flex items-center justify-center">
-                            <div class="bg-white p-4 rounded-xl shadow-md inline-flex items-center justify-center">
-                                <div id="qrcode" style="display: flex; align-items: center; justify-content: center;"></div>
+                    <!-- Icon QR ungu (yang sudah ada) -->
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-400 rounded-full mx-auto mb-5 flex items-center justify-center shadow-lg">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <!-- SVG QR code icon -->
+                        </svg>
+                    </div>
+                    <!-- Header Icon -->
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z">
+                            </path>
+                        </svg>
+                    </div>
+
+                    <!-- Title -->
+                    <h3
+                        class="text-2xl font-bold text-center bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                        Pembayaran QRIS
+                    </h3>
+
+                    <!-- Description -->
+                    <p class="text-sm text-gray-600 text-center mb-6 px-2">
+                        Scan QR Code untuk melakukan pembayaran melalui GoPay atau e-wallet lainnya
+                    </p>
+
+                    <!-- QR Code Section - CENTERED -->
+                    <div class="w-full mb-6">
+                        <div
+                            class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-6 border-2 border-indigo-200">
+                            <!-- QR Code Container with Perfect Centering -->
+                            <div class="flex items-center justify-center">
+                                <div class="bg-white p-4 rounded-xl shadow-md inline-flex items-center justify-center">
+                                    <div id="qrcode"
+                                        style="display: flex; align-items: center; justify-content: center;"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Payment Info -->
-                <div class="w-full bg-gray-50 rounded-xl p-5 space-y-3 border border-gray-200 mb-6">
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-600 font-medium text-sm">Total Pembayaran:</span>
-                        <span class="font-bold text-gray-800 text-xl" id="qrisTotal">Rp 0</span>
-                    </div>
-                    <div class="flex justify-between items-start gap-2">
-                        <span class="text-gray-600 font-medium text-sm flex-shrink-0">ID Transaksi:</span>
-                        <span class="font-mono text-xs text-gray-800 text-right break-all" id="qrisTransactionId">-</span>
-                    </div>
-                    <div class="flex justify-between items-start gap-2">
-                        <span class="text-gray-600 font-medium text-sm flex-shrink-0">Merchant:</span>
-                        <span class="font-medium text-sm text-gray-800 text-right break-words" id="merchantName">Your Cashier</span>
-                    </div>
-                </div>
-
-                <!-- Warning Box -->
-                <div class="w-full bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-xl p-4 mb-6">
-                    <div class="flex items-start gap-3">
-                        <svg class="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                        </svg>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-yellow-800 mb-1">Penting!</p>
-                            <p class="text-xs text-yellow-700">
-                                Pastikan pembeli memasukkan nominal Rp <span id="qrisTotalReminder" class="font-semibold"></span> secara manual di aplikasi e-wallet.
-                            </p>
+                    <!-- Payment Info -->
+                    <div class="w-full bg-gray-50 rounded-xl p-5 space-y-3 border border-gray-200 mb-6">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 font-medium text-sm">Total Pembayaran:</span>
+                            <span class="font-bold text-gray-800 text-xl" id="qrisTotal">Rp 0</span>
+                        </div>
+                        <div class="flex justify-between items-start gap-2">
+                            <span class="text-gray-600 font-medium text-sm flex-shrink-0">ID Transaksi:</span>
+                            <span class="font-mono text-xs text-gray-800 text-right break-all"
+                                id="qrisTransactionId">-</span>
+                        </div>
+                        <div class="flex justify-between items-start gap-2">
+                            <span class="text-gray-600 font-medium text-sm flex-shrink-0">Merchant:</span>
+                            <span class="font-medium text-sm text-gray-800 text-right break-words"
+                                id="merchantName">Your Cashier</span>
                         </div>
                     </div>
-                </div>
 
-                <!-- Action Buttons -->
-                <div class="w-full space-y-3">
-                    <button onclick="confirmQrisPayment()" type="button" class="w-full btn-primary py-3.5 rounded-xl text-white font-semibold hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        Konfirmasi Pembayaran
-                    </button>
-                    <button onclick="cancelQrisPayment()" type="button" class="w-full py-3.5 rounded-xl border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 flex items-center justify-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                        Batal
-                    </button>
-                </div>   
+                    <!-- Warning Box -->
+                    <div
+                        class="w-full bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-xl p-4 mb-6">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                                </path>
+                            </svg>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-yellow-800 mb-1">Penting!</p>
+                                <p class="text-xs text-yellow-700">
+                                    Pastikan pembeli memasukkan nominal Rp <span id="qrisTotalReminder"
+                                        class="font-semibold"></span> secara manual di aplikasi e-wallet.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="w-full space-y-3">
+                        <button onclick="confirmQrisPayment()" type="button"
+                            class="w-full btn-primary py-3.5 rounded-xl text-white font-semibold hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            Konfirmasi Pembayaran
+                        </button>
+                        <button onclick="cancelQrisPayment()" type="button"
+                            class="w-full py-3.5 rounded-xl border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                            Batal
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     <!-- Modal Struk -->
     <div id="receiptModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
             <div class="print-receipt" id="receiptContent"></div>
             <div class="flex gap-3 mt-6">
-                <button onclick="printReceipt()" type="button" class="flex-1 btn-primary py-3 rounded-lg text-white font-semibold hover:shadow-lg transition-all">
+                <button onclick="printReceipt()" type="button"
+                    class="flex-1 btn-primary py-3 rounded-lg text-white font-semibold hover:shadow-lg transition-all">
                     Cetak Struk
                 </button>
-                <button onclick="closeReceiptModal()" type="button" class="flex-1 py-3 rounded-lg border-2 border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 transition-all">
+                <button onclick="closeReceiptModal()" type="button"
+                    class="flex-1 py-3 rounded-lg border-2 border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 transition-all">
                     Tutup
                 </button>
             </div>
@@ -954,15 +1116,17 @@
             <h3 class="text-lg font-bold text-gray-800 mb-4">Edit Stok Barang</h3>
             <form onsubmit="saveEditStock(event)" class="space-y-4">
                 <input type="hidden" id="editStockId">
-                
+
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Nama Barang</label>
-                    <input type="text" id="editStockName" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
+                    <input type="text" id="editStockName" required
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Kategori</label>
-                    <select id="editStockCategory" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
+                    <select id="editStockCategory" required
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
                         <option value="">-- Pilih Kategori --</option>
                         <option value="Makanan">Makanan</option>
                         <option value="Minuman">Minuman</option>
@@ -972,24 +1136,29 @@
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Jumlah Stok</label>
-                    <input type="number" id="editStockQuantity" min="0" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
+                    <input type="number" id="editStockQuantity" min="0" required
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Harga Beli (Modal)</label>
-                    <input type="number" id="editStockCostPrice" min="0" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
+                    <input type="number" id="editStockCostPrice" min="0" required
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
                 </div>
 
                 <div id="editSellPriceField">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Harga Jual</label>
-                    <input type="number" id="editStockSellPrice" min="0" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
+                    <input type="number" id="editStockSellPrice" min="0" required
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500">
                 </div>
 
                 <div class="flex gap-3">
-                    <button type="submit" class="btn-primary flex-1 py-3 rounded-lg text-white font-semibold hover:shadow-lg transition-all">
+                    <button type="submit"
+                        class="btn-primary flex-1 py-3 rounded-lg text-white font-semibold hover:shadow-lg transition-all">
                         Simpan Perubahan
                     </button>
-                    <button type="button" onclick="closeEditStockModal()" class="flex-1 py-3 rounded-lg border-2 border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 transition-all">
+                    <button type="button" onclick="closeEditStockModal()"
+                        class="flex-1 py-3 rounded-lg border-2 border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 transition-all">
                         Batal
                     </button>
                 </div>
@@ -1031,7 +1200,7 @@
         let users = [];
         let salesChart = null;
         let currentFilter = 'all'; //semua info
-        
+
         // Variable untuk menyimpan informasi toko
         let storeInfo = {
             name: 'Your Cashier Store',
@@ -1051,7 +1220,7 @@
 
         function loadDataFromFirebase() {
             showSyncIndicator();
-            
+
             database.ref('stocks').on('value', (snapshot) => {
                 stocks = [];
                 if (snapshot.exists()) {
@@ -1084,7 +1253,7 @@
                 }
                 loadUserList();
             });
-            
+
             // Load store info dari Firebase
             database.ref('settings').on('value', (snapshot) => {
                 if (snapshot.exists()) {
@@ -1098,7 +1267,7 @@
                     const storeNameField = document.getElementById('storeName');
                     const storeAddressField = document.getElementById('storeAddress');
                     const storePhoneField = document.getElementById('storePhone');
-                    
+
                     if (storeNameField) storeNameField.value = storeInfo.name;
                     if (storeAddressField) storeAddressField.value = storeInfo.address;
                     if (storePhoneField) storePhoneField.value = storeInfo.phone;
@@ -1152,7 +1321,7 @@
 
             let html = '';
             users.forEach(user => {
-                const roleBadge = user.role === 'owner' 
+                const roleBadge = user.role === 'owner'
                     ? '<span class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs font-semibold">OWNER</span>'
                     : '<span class="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold">STAFF</span>';
 
@@ -1198,12 +1367,12 @@
             document.getElementById('sidebarOverlay').classList.add('hidden');
         }
 
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 const qrisModal = document.getElementById('qrisModal');
                 const receiptModal = document.getElementById('receiptModal');
                 const editStockModal = document.getElementById('editStockModal');
-                
+
                 if (!qrisModal.classList.contains('hidden')) {
                     cancelQrisPayment();
                 } else if (!receiptModal.classList.contains('hidden')) {
@@ -1216,12 +1385,12 @@
             }
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             if (!localStorage.getItem('isAuthenticated')) {
-                window.location.href = 'login.html';
+                window.location.href = 'index.html';
                 return;
             }
-            
+
             initializeApp();
             loadDataFromFirebase();
         });
@@ -1240,32 +1409,32 @@
             if (userRole === 'staff') {
                 const settingsMenu = document.getElementById('menu-settings');
                 if (settingsMenu) settingsMenu.style.display = 'none';
-                
+
                 const sellPriceField = document.getElementById('sellPriceField');
                 if (sellPriceField) sellPriceField.style.display = 'none';
-                
+
                 const costPriceField = document.getElementById('costPriceField');
                 if (costPriceField) costPriceField.style.display = 'none';
-                
+
                 const actionHeader = document.getElementById('actionHeader');
                 if (actionHeader) actionHeader.style.display = 'none';
-                
+
                 hideStaffRestrictedReportColumns();
             }
         }
-        
+
         function hideStaffRestrictedReportColumns() {
             if (userRole !== 'staff') return;
-            
+
             const revenueCard = document.querySelector('#analyticsRevenue')?.closest('.bg-white');
             if (revenueCard) revenueCard.style.display = 'none';
-            
+
             const profitCard = document.querySelector('#analyticsProfit')?.closest('.bg-white');
             if (profitCard) profitCard.style.display = 'none';
-            
+
             const avgCard = document.querySelector('#analyticsAverage')?.closest('.bg-white');
             if (avgCard) avgCard.style.display = 'none';
-            
+
             const chartSection = document.getElementById('chartSection');
             if (chartSection) chartSection.style.display = 'none';
         }
@@ -1275,14 +1444,14 @@
             sections.forEach(s => {
                 const sectionEl = document.getElementById(`section-${s}`);
                 if (sectionEl) sectionEl.classList.add('hidden');
-                
+
                 const menuItem = document.getElementById(`menu-${s}`);
                 if (menuItem) menuItem.classList.remove('bg-white/20');
             });
 
             const activeSection = document.getElementById(`section-${section}`);
             if (activeSection) activeSection.classList.remove('hidden');
-            
+
             const activeMenu = document.getElementById(`menu-${section}`);
             if (activeMenu) activeMenu.classList.add('bg-white/20');
 
@@ -1295,7 +1464,7 @@
 
             document.getElementById('pageTitle').textContent = titles[section].title;
             document.getElementById('pageSubtitle').textContent = titles[section].subtitle;
-            
+
             if (section === 'report' && userRole === 'staff') {
                 setTimeout(() => {
                     hideStaffRestrictedReportColumns();
@@ -1321,120 +1490,120 @@
         }
 
         function loadProducts() {
-    const select = document.getElementById('productSelect');
-    if (!select) return;
-    
-    select.innerHTML = '<option value="">-- Pilih Produk --</option>';
-    
-    stocks.forEach((stock, index) => {
-        if (stock.quantity > 0) {
-            // HITUNG STOK YANG SUDAH DI KERANJANG
-            const cartItem = cart.find(item => item.stockIndex === index);
-            const reservedStock = cartItem ? cartItem.quantity : 0;
-            const availableStock = stock.quantity - reservedStock;
-            
-            const option = document.createElement('option');
-            option.value = index;
-            
-            // TAMPILKAN STOK TERSISA REAL-TIME
-            if (availableStock > 0) {
-                option.textContent = `${stock.name} - Rp ${formatNumber(stock.sellPrice)} (Tersisa: ${availableStock})`;
-            } else {
-                option.textContent = `${stock.name} - HABIS (Semua di keranjang)`;
-                option.disabled = true;
-                option.style.color = '#999';
-            }
-            
-            select.appendChild(option);
-        }
-    });
+            const select = document.getElementById('productSelect');
+            if (!select) return;
 
-    select.onchange = function() {
-        const index = this.value;
-        if (index !== '') {
-            const stock = stocks[index];
-            const cartItem = cart.find(item => item.stockIndex === parseInt(index));
-            const reservedStock = cartItem ? cartItem.quantity : 0;
-            const availableStock = stock.quantity - reservedStock;
-            
-            document.getElementById('productPrice').value = 'Rp ' + formatNumber(stock.sellPrice);
-            document.getElementById('productQuantity').max = availableStock;
-            document.getElementById('productQuantity').value = Math.min(1, availableStock);
-        } else {
-            document.getElementById('productPrice').value = '';
-            document.getElementById('productQuantity').max = '';
+            select.innerHTML = '<option value="">-- Pilih Produk --</option>';
+
+            stocks.forEach((stock, index) => {
+                if (stock.quantity > 0) {
+                    // HITUNG STOK YANG SUDAH DI KERANJANG
+                    const cartItem = cart.find(item => item.stockIndex === index);
+                    const reservedStock = cartItem ? cartItem.quantity : 0;
+                    const availableStock = stock.quantity - reservedStock;
+
+                    const option = document.createElement('option');
+                    option.value = index;
+
+                    // TAMPILKAN STOK TERSISA REAL-TIME
+                    if (availableStock > 0) {
+                        option.textContent = `${stock.name} - Rp ${formatNumber(stock.sellPrice)} (Tersisa: ${availableStock})`;
+                    } else {
+                        option.textContent = `${stock.name} - HABIS (Semua di keranjang)`;
+                        option.disabled = true;
+                        option.style.color = '#999';
+                    }
+
+                    select.appendChild(option);
+                }
+            });
+
+            select.onchange = function () {
+                const index = this.value;
+                if (index !== '') {
+                    const stock = stocks[index];
+                    const cartItem = cart.find(item => item.stockIndex === parseInt(index));
+                    const reservedStock = cartItem ? cartItem.quantity : 0;
+                    const availableStock = stock.quantity - reservedStock;
+
+                    document.getElementById('productPrice').value = 'Rp ' + formatNumber(stock.sellPrice);
+                    document.getElementById('productQuantity').max = availableStock;
+                    document.getElementById('productQuantity').value = Math.min(1, availableStock);
+                } else {
+                    document.getElementById('productPrice').value = '';
+                    document.getElementById('productQuantity').max = '';
+                }
+            };
         }
-    };
-}
 
         function addToCart() {
-    const selectIndex = document.getElementById('productSelect').value;
-    const quantity = parseInt(document.getElementById('productQuantity').value);
+            const selectIndex = document.getElementById('productSelect').value;
+            const quantity = parseInt(document.getElementById('productQuantity').value);
 
-    if (selectIndex === '') {
-        alert('Pilih produk terlebih dahulu!');
-        return;
-    }
+            if (selectIndex === '') {
+                alert('Pilih produk terlebih dahulu!');
+                return;
+            }
 
-    const stock = stocks[selectIndex];
+            const stock = stocks[selectIndex];
 
-    // HITUNG TOTAL QUANTITY DI KERANJANG UNTUK PRODUK INI
-    const existingItem = cart.find(item => item.stockIndex === parseInt(selectIndex));
-    const currentCartQuantity = existingItem ? existingItem.quantity : 0;
-    const totalQuantityNeeded = currentCartQuantity + quantity;
+            // HITUNG TOTAL QUANTITY DI KERANJANG UNTUK PRODUK INI
+            const existingItem = cart.find(item => item.stockIndex === parseInt(selectIndex));
+            const currentCartQuantity = existingItem ? existingItem.quantity : 0;
+            const totalQuantityNeeded = currentCartQuantity + quantity;
 
-    // VALIDASI: CEK APAKAH TOTAL MELEBIHI STOK
-    if (totalQuantityNeeded > stock.quantity) {
-        const availableStock = stock.quantity - currentCartQuantity;
-        
-        if (availableStock <= 0) {
-            alert(`❌ Stok tidak mencukupi!\n\n` +
-                  `Produk: ${stock.name}\n` +
-                  `Stok tersedia: ${stock.quantity}\n` +
-                  `Sudah di keranjang: ${currentCartQuantity}\n` +
-                  `Sisa yang bisa ditambah: 0`);
-            return;
+            // VALIDASI: CEK APAKAH TOTAL MELEBIHI STOK
+            if (totalQuantityNeeded > stock.quantity) {
+                const availableStock = stock.quantity - currentCartQuantity;
+
+                if (availableStock <= 0) {
+                    alert(`❌ Stok tidak mencukupi!\n\n` +
+                        `Produk: ${stock.name}\n` +
+                        `Stok tersedia: ${stock.quantity}\n` +
+                        `Sudah di keranjang: ${currentCartQuantity}\n` +
+                        `Sisa yang bisa ditambah: 0`);
+                    return;
+                }
+
+                alert(`❌ Stok tidak mencukupi!\n\n` +
+                    `Produk: ${stock.name}\n` +
+                    `Stok tersedia: ${stock.quantity}\n` +
+                    `Sudah di keranjang: ${currentCartQuantity}\n` +
+                    `Sisa yang bisa ditambah: ${availableStock}\n\n` +
+                    `Anda mencoba menambah: ${quantity}`);
+                return;
+            }
+
+            // JIKA VALIDASI LOLOS, TAMBAHKAN KE KERANJANG
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cart.push({
+                    stockIndex: parseInt(selectIndex),
+                    name: stock.name,
+                    price: stock.sellPrice,
+                    costPrice: stock.costPrice,
+                    quantity: quantity,
+                    stockId: stock.id
+                });
+            }
+
+            updateCartDisplay();
+
+            // RESET FORM
+            document.getElementById('productSelect').value = '';
+            document.getElementById('productQuantity').value = 1;
+            document.getElementById('productPrice').value = '';
+
+            // TAMPILKAN NOTIFIKASI SUKSES
+            showSuccessNotification(`✅ Berhasil ditambahkan ke keranjang!`);
         }
-        
-        alert(`❌ Stok tidak mencukupi!\n\n` +
-              `Produk: ${stock.name}\n` +
-              `Stok tersedia: ${stock.quantity}\n` +
-              `Sudah di keranjang: ${currentCartQuantity}\n` +
-              `Sisa yang bisa ditambah: ${availableStock}\n\n` +
-              `Anda mencoba menambah: ${quantity}`);
-        return;
-    }
 
-    // JIKA VALIDASI LOLOS, TAMBAHKAN KE KERANJANG
-    if (existingItem) {
-        existingItem.quantity += quantity;
-    } else {
-        cart.push({
-            stockIndex: parseInt(selectIndex),
-            name: stock.name,
-            price: stock.sellPrice,
-            costPrice: stock.costPrice,
-            quantity: quantity,
-            stockId: stock.id
-        });
-    }
-
-    updateCartDisplay();
-    
-    // RESET FORM
-    document.getElementById('productSelect').value = '';
-    document.getElementById('productQuantity').value = 1;
-    document.getElementById('productPrice').value = '';
-    
-    // TAMPILKAN NOTIFIKASI SUKSES
-    showSuccessNotification(`✅ Berhasil ditambahkan ke keranjang!`);
-}
-
-// FUNGSI NOTIFIKASI SUKSES (OPSIONAL - UNTUK UX LEBIH BAIK)
-function showSuccessNotification(message) {
-    const notification = document.createElement('div');
-    notification.className = 'fixed top-20 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in';
-    notification.innerHTML = `
+        // FUNGSI NOTIFIKASI SUKSES (OPSIONAL - UNTUK UX LEBIH BAIK)
+        function showSuccessNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-20 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in';
+            notification.innerHTML = `
         <div class="flex items-center gap-3">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -1442,39 +1611,39 @@ function showSuccessNotification(message) {
             <span class="font-medium">${message}</span>
         </div>
     `;
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-        notification.style.opacity = '0';
-        notification.style.transition = 'opacity 0.3s';
-        setTimeout(() => notification.remove(), 300);
-    }, 2000);
-}
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transition = 'opacity 0.3s';
+                setTimeout(() => notification.remove(), 300);
+            }, 2000);
+        }
 
         function updateCartDisplay() {
-    const cartItemsDiv = document.getElementById('cartItems');
-    
-    if (cart.length === 0) {
-        cartItemsDiv.innerHTML = '<p class="text-gray-400 text-center py-8">Keranjang masih kosong</p>';
-        document.getElementById('cartSubtotal').textContent = 'Rp 0';
-        document.getElementById('cartTotal').textContent = 'Rp 0';
-        document.getElementById('cartItemCount').textContent = '0';
-        
-        // UPDATE DROPDOWN PRODUK UNTUK REFRESH STOK
-        loadProducts();
-        return;
-    }
+            const cartItemsDiv = document.getElementById('cartItems');
 
-    let html = '';
-    let subtotal = 0;
-    let itemCount = 0;
+            if (cart.length === 0) {
+                cartItemsDiv.innerHTML = '<p class="text-gray-400 text-center py-8">Keranjang masih kosong</p>';
+                document.getElementById('cartSubtotal').textContent = 'Rp 0';
+                document.getElementById('cartTotal').textContent = 'Rp 0';
+                document.getElementById('cartItemCount').textContent = '0';
 
-    cart.forEach((item, index) => {
-        const itemTotal = item.price * item.quantity;
-        subtotal += itemTotal;
-        itemCount += item.quantity;
+                // UPDATE DROPDOWN PRODUK UNTUK REFRESH STOK
+                loadProducts();
+                return;
+            }
 
-        html += `
+            let html = '';
+            let subtotal = 0;
+            let itemCount = 0;
+
+            cart.forEach((item, index) => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                itemCount += item.quantity;
+
+                html += `
             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <div class="flex-1">
                     <p class="font-medium text-gray-800">${item.name}</p>
@@ -1490,26 +1659,26 @@ function showSuccessNotification(message) {
                 </div>
             </div>
         `;
-    });
+            });
 
-    cartItemsDiv.innerHTML = html;
-    document.getElementById('cartSubtotal').textContent = 'Rp ' + formatNumber(subtotal);
-    document.getElementById('cartTotal').textContent = 'Rp ' + formatNumber(subtotal);
-    document.getElementById('cartItemCount').textContent = itemCount;
-    
-    // UPDATE DROPDOWN PRODUK UNTUK REFRESH STOK TERSISA
-    loadProducts();
-}
+            cartItemsDiv.innerHTML = html;
+            document.getElementById('cartSubtotal').textContent = 'Rp ' + formatNumber(subtotal);
+            document.getElementById('cartTotal').textContent = 'Rp ' + formatNumber(subtotal);
+            document.getElementById('cartItemCount').textContent = itemCount;
+
+            // UPDATE DROPDOWN PRODUK UNTUK REFRESH STOK TERSISA
+            loadProducts();
+        }
 
         function removeFromCart(index) {
-    cart.splice(index, 1);
-    updateCartDisplay(); // Ini akan otomatis memanggil loadProducts()
-}
+            cart.splice(index, 1);
+            updateCartDisplay(); // Ini akan otomatis memanggil loadProducts()
+        }
 
-function clearCart() {
-    cart = [];
-    updateCartDisplay(); // Ini akan otomatis memanggil loadProducts()
-}
+        function clearCart() {
+            cart = [];
+            updateCartDisplay(); // Ini akan otomatis memanggil loadProducts()
+        }
 
         function clearCart() {
             cart = [];
@@ -1557,42 +1726,42 @@ function clearCart() {
         function generateQRISString(amount, transactionId) {
             // Payload Format Indicator
             let qrisString = '000201';
-            
+
             // Point of Initiation Method (Dynamic QR)
             qrisString += '010212';
-            
+
             // Merchant Account Information (Tag 26 untuk GoPay/QRIS Indonesia)
             let merchantInfo = '';
             merchantInfo += '0014ID.CO.QRIS.WWW'; // Global Unique Identifier
             merchantInfo += '02' + padLeft(GOPAY_MERCHANT_CONFIG.nmid.length) + GOPAY_MERCHANT_CONFIG.nmid; // NMID
             merchantInfo += '03' + padLeft(GOPAY_MERCHANT_CONFIG.merchantId.length) + GOPAY_MERCHANT_CONFIG.merchantId; // Merchant PAN
-            
+
             qrisString += '26' + padLeft(merchantInfo.length) + merchantInfo;
-            
+
             // Merchant Category Code (Retail)
             qrisString += '52040000';
-            
+
             // Transaction Currency (IDR = 360)
             qrisString += '5303360';
-            
+
             // Transaction Amount (jika dynamic)
             if (amount && amount > 0) {
                 const amountStr = amount.toString();
                 qrisString += '54' + padLeft(amountStr.length) + amountStr;
             }
-            
+
             // Country Code (Indonesia)
             qrisString += '5802ID';
-            
+
             // Merchant Name
             qrisString += '59' + padLeft(GOPAY_MERCHANT_CONFIG.merchantName.length) + GOPAY_MERCHANT_CONFIG.merchantName;
-            
+
             // Merchant City
             qrisString += '60' + padLeft(GOPAY_MERCHANT_CONFIG.merchantCity.length) + GOPAY_MERCHANT_CONFIG.merchantCity;
-            
+
             // Postal Code
             qrisString += '61' + padLeft(GOPAY_MERCHANT_CONFIG.merchantPostalCode.length) + GOPAY_MERCHANT_CONFIG.merchantPostalCode;
-            
+
             // Additional Data (Transaction ID)
             if (transactionId) {
                 let additionalData = '';
@@ -1602,11 +1771,11 @@ function clearCart() {
 
             // CRC Checksum (akan dihitung)
             qrisString += '6304';
-            
+
             // Calculate CRC16-CCITT
             const crc = calculateCRC16(qrisString);
             qrisString += crc;
-            
+
             return qrisString;
         }
         /**
@@ -1622,10 +1791,10 @@ function clearCart() {
         function calculateCRC16(str) {
             let crc = 0xFFFF;
             const polynomial = 0x1021;
-            
+
             for (let i = 0; i < str.length; i++) {
                 crc ^= (str.charCodeAt(i) << 8);
-                
+
                 for (let j = 0; j < 8; j++) {
                     if ((crc & 0x8000) !== 0) {
                         crc = ((crc << 1) ^ polynomial) & 0xFFFF;
@@ -1634,124 +1803,124 @@ function clearCart() {
                     }
                 }
             }
-            
+
             return crc.toString(16).toUpperCase().padStart(4, '0');
         }
 
         function showQrisModal(transaction) {
-    document.getElementById('qrisTotal').textContent = 'Rp ' + formatNumber(transaction.total);
-    document.getElementById('qrisTransactionId').textContent = transaction.id;
-    document.getElementById('merchantName').textContent = GOPAY_MERCHANT_CONFIG.merchantName;
-    document.getElementById('qrisTotalReminder').textContent = formatNumber(transaction.total);
-    
-    const qrcodeContainer = document.getElementById('qrcode');
-    qrcodeContainer.innerHTML = ''; // Clear previous QR
-    
-    // Reset styling
-    qrcodeContainer.style.width = '100%';
-    qrcodeContainer.style.maxWidth = '300px';
-    qrcodeContainer.style.height = 'auto';
-    qrcodeContainer.style.display = 'flex';
-    qrcodeContainer.style.justifyContent = 'center';
-    qrcodeContainer.style.alignItems = 'center';
-    qrcodeContainer.style.flexDirection = 'column';
-    qrcodeContainer.style.backgroundColor = '#ffffff';
-    qrcodeContainer.style.padding = '10px';
-    qrcodeContainer.style.overflow = 'hidden';
-    qrcodeContainer.style.margin = '0 auto';
+            document.getElementById('qrisTotal').textContent = 'Rp ' + formatNumber(transaction.total);
+            document.getElementById('qrisTransactionId').textContent = transaction.id;
+            document.getElementById('merchantName').textContent = GOPAY_MERCHANT_CONFIG.merchantName;
+            document.getElementById('qrisTotalReminder').textContent = formatNumber(transaction.total);
 
-    // PILIHAN 1: Static QRIS URL
-    if (GOPAY_MERCHANT_CONFIG.staticQRISUrl && GOPAY_MERCHANT_CONFIG.staticQRISUrl.trim() !== "") {
-        let imageUrl = GOPAY_MERCHANT_CONFIG.staticQRISUrl;
-        
-        // Konversi Google Drive link
-        if (imageUrl.includes('drive.google.com')) {
-            const fileId = imageUrl.match(/\/d\/(.+?)\//)?.[1] || imageUrl.match(/id=(.+?)(&|$)/)?.[1];
-            if (fileId) {
-                imageUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+            const qrcodeContainer = document.getElementById('qrcode');
+            qrcodeContainer.innerHTML = ''; // Clear previous QR
+
+            // Reset styling
+            qrcodeContainer.style.width = '100%';
+            qrcodeContainer.style.maxWidth = '300px';
+            qrcodeContainer.style.height = 'auto';
+            qrcodeContainer.style.display = 'flex';
+            qrcodeContainer.style.justifyContent = 'center';
+            qrcodeContainer.style.alignItems = 'center';
+            qrcodeContainer.style.flexDirection = 'column';
+            qrcodeContainer.style.backgroundColor = '#ffffff';
+            qrcodeContainer.style.padding = '10px';
+            qrcodeContainer.style.overflow = 'hidden';
+            qrcodeContainer.style.margin = '0 auto';
+
+            // PILIHAN 1: Static QRIS URL
+            if (GOPAY_MERCHANT_CONFIG.staticQRISUrl && GOPAY_MERCHANT_CONFIG.staticQRISUrl.trim() !== "") {
+                let imageUrl = GOPAY_MERCHANT_CONFIG.staticQRISUrl;
+
+                // Konversi Google Drive link
+                if (imageUrl.includes('drive.google.com')) {
+                    const fileId = imageUrl.match(/\/d\/(.+?)\//)?.[1] || imageUrl.match(/id=(.+?)(&|$)/)?.[1];
+                    if (fileId) {
+                        imageUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+                    }
+                }
+
+                const img = document.createElement('img');
+                img.src = imageUrl;
+
+                // RESPONSIVE SIZING - FIXED
+                img.style.width = '100%';
+                img.style.maxWidth = '280px';
+                img.style.height = 'auto';
+                img.style.objectFit = 'contain';
+                img.style.display = 'block';
+                img.style.margin = '0 auto';
+                img.style.border = '2px solid #e5e7eb';
+                img.style.borderRadius = '12px';
+                img.style.padding = '10px';
+                img.style.backgroundColor = '#ffffff';
+                img.alt = 'QRIS Code';
+
+                img.onerror = function () {
+                    qrcodeContainer.innerHTML = '<div class="text-red-500 text-center p-4">❌ Gagal memuat QR Code<br><small>Periksa URL gambar QRIS Anda</small></div>';
+                };
+
+                qrcodeContainer.appendChild(img);
             }
-        }
-        
-        const img = document.createElement('img');
-        img.src = imageUrl;
-        
-        // RESPONSIVE SIZING - FIXED
-        img.style.width = '100%';
-        img.style.maxWidth = '280px';
-        img.style.height = 'auto';
-        img.style.objectFit = 'contain';
-        img.style.display = 'block';
-        img.style.margin = '0 auto';
-        img.style.border = '2px solid #e5e7eb';
-        img.style.borderRadius = '12px';
-        img.style.padding = '10px';
-        img.style.backgroundColor = '#ffffff';
-        img.alt = 'QRIS Code';
-        
-        img.onerror = function() {
-            qrcodeContainer.innerHTML = '<div class="text-red-500 text-center p-4">❌ Gagal memuat QR Code<br><small>Periksa URL gambar QRIS Anda</small></div>';
-        };
-        
-        qrcodeContainer.appendChild(img);
-    } 
-    // PILIHAN 2: Dynamic QRIS Generation
-    else {
-        try {
-            const qrisData = generateQRISString(transaction.total, transaction.id);
-            
-            // Buat wrapper dengan ukuran responsif
-            const qrWrapper = document.createElement('div');
-            qrWrapper.id = 'qr-wrapper';
-            qrWrapper.style.display = 'flex';
-            qrWrapper.style.justifyContent = 'center';
-            qrWrapper.style.alignItems = 'center';
-            qrWrapper.style.width = '100%';
-            qrWrapper.style.maxWidth = '280px';
-            qrWrapper.style.height = 'auto';
-            qrWrapper.style.aspectRatio = '1 / 1'; // Kotak sempurna
-            qrWrapper.style.margin = '0 auto';
-            qrWrapper.style.backgroundColor = '#fff';
-            qrWrapper.style.padding = '10px';
-            qrWrapper.style.borderRadius = '8px';
-            qrWrapper.style.overflow = 'hidden';
-            
-            qrcodeContainer.appendChild(qrWrapper);
-            
-            // Hitung ukuran QR berdasarkan lebar container
-            const containerWidth = Math.min(280, window.innerWidth - 100);
-            const qrSize = Math.min(containerWidth - 20, 260);
-            
-            // Generate QR Code dengan ukuran dinamis
-            new QRCode(qrWrapper, {
-                text: qrisData,
-                width: qrSize,
-                height: qrSize,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            
-        } catch (error) {
-            console.error('Error generating QRIS:', error);
-            qrcodeContainer.innerHTML = `
+            // PILIHAN 2: Dynamic QRIS Generation
+            else {
+                try {
+                    const qrisData = generateQRISString(transaction.total, transaction.id);
+
+                    // Buat wrapper dengan ukuran responsif
+                    const qrWrapper = document.createElement('div');
+                    qrWrapper.id = 'qr-wrapper';
+                    qrWrapper.style.display = 'flex';
+                    qrWrapper.style.justifyContent = 'center';
+                    qrWrapper.style.alignItems = 'center';
+                    qrWrapper.style.width = '100%';
+                    qrWrapper.style.maxWidth = '280px';
+                    qrWrapper.style.height = 'auto';
+                    qrWrapper.style.aspectRatio = '1 / 1'; // Kotak sempurna
+                    qrWrapper.style.margin = '0 auto';
+                    qrWrapper.style.backgroundColor = '#fff';
+                    qrWrapper.style.padding = '10px';
+                    qrWrapper.style.borderRadius = '8px';
+                    qrWrapper.style.overflow = 'hidden';
+
+                    qrcodeContainer.appendChild(qrWrapper);
+
+                    // Hitung ukuran QR berdasarkan lebar container
+                    const containerWidth = Math.min(280, window.innerWidth - 100);
+                    const qrSize = Math.min(containerWidth - 20, 260);
+
+                    // Generate QR Code dengan ukuran dinamis
+                    new QRCode(qrWrapper, {
+                        text: qrisData,
+                        width: qrSize,
+                        height: qrSize,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+
+                } catch (error) {
+                    console.error('Error generating QRIS:', error);
+                    qrcodeContainer.innerHTML = `
                 <div class="text-red-500 text-center p-4">
                     ❌ Gagal generate QR Code<br>
                     <small class="text-xs">${error.message}</small>
                 </div>
             `;
-        }
-    }
+                }
+            }
 
-    document.getElementById('qrisModal').classList.remove('hidden');
-    
-    // Auto-hide modal after 5 minutes
-    setTimeout(() => {
-        if (!document.getElementById('qrisModal').classList.contains('hidden')) {
-            alert('Waktu pembayaran habis. Silakan coba lagi.');
-            cancelQrisPayment();
+            document.getElementById('qrisModal').classList.remove('hidden');
+
+            // Auto-hide modal after 5 minutes
+            setTimeout(() => {
+                if (!document.getElementById('qrisModal').classList.contains('hidden')) {
+                    alert('Waktu pembayaran habis. Silakan coba lagi.');
+                    cancelQrisPayment();
+                }
+            }, 300000);
         }
-    }, 300000); 
-}
 
         function processTransaction() {
             if (cart.length === 0) {
@@ -1792,7 +1961,7 @@ function clearCart() {
         }
         function confirmQrisPayment() {
             const confirmed = confirm('Apakah pembayaran sudah berhasil?\n\nPastikan Anda sudah menerima notifikasi pembayaran dari GoPay/e-wallet.');
-            
+
             if (confirmed) {
                 completeTransaction(currentTransaction);
                 document.getElementById('qrisModal').classList.add('hidden');
@@ -1807,7 +1976,7 @@ function clearCart() {
         }
         function completeTransaction(transaction) {
             showSyncIndicator();
-            
+
             transaction.items.forEach(item => {
                 const stockId = item.stockId;
                 const stock = stocks.find(s => s.id === stockId);
@@ -1826,7 +1995,7 @@ function clearCart() {
 
         function generateReceipt(transaction) {
             const receiptContent = document.getElementById('receiptContent');
-            
+
             let itemsHtml = '';
             transaction.items.forEach(item => {
                 itemsHtml += `
@@ -1875,191 +2044,192 @@ function clearCart() {
         }
 
         // PERBAIKAN FUNGSI ADD STOCK
-function addStock(event) {
-    event.preventDefault();
+        function addStock(event) {
+            event.preventDefault();
 
-    const name = document.getElementById('stockName').value.trim();
-    const category = document.getElementById('stockCategory').value;
-    const quantity = parseInt(document.getElementById('stockQuantity').value);
-    
-    // Validasi input
-    if (!name) {
-        alert('Nama barang harus diisi!');
-        return;
-    }
-    
-    if (!category) {
-        alert('Kategori harus dipilih!');
-        return;
-    }
-    
-    if (!quantity || quantity < 1) {
-        alert('Jumlah stok minimal 1!');
-        return;
-    }
-    
-    let costPrice, sellPrice;
-    
-    if (userRole === 'owner') {
-        const costPriceInput = document.getElementById('stockCostPrice');
-        const sellPriceInput = document.getElementById('stockSellPrice');
-        
-        costPrice = parseInt(costPriceInput.value) || 0;
-        sellPrice = parseInt(sellPriceInput.value) || 0;
-        
-        if (costPrice <= 0) {
-            alert('Harga beli harus diisi dan lebih dari 0!');
-            return;
-        }
-        
-        if (sellPrice <= 0) {
-            alert('Harga jual harus diisi dan lebih dari 0!');
-            return;
-        }
-        
-        if (sellPrice < costPrice) {
-            if (!confirm('Harga jual lebih rendah dari harga beli. Yakin ingin melanjutkan?')) {
+            const name = document.getElementById('stockName').value.trim();
+            const category = document.getElementById('stockCategory').value;
+            const quantity = parseInt(document.getElementById('stockQuantity').value);
+
+            // Validasi input
+            if (!name) {
+                alert('Nama barang harus diisi!');
                 return;
             }
-        }
-    } else {
-        // Staff mode - harga akan diset oleh owner
-        costPrice = 0;
-        sellPrice = 0;
-    }
 
-    const stockId = Date.now();
-    const stock = {
-        id: stockId,
-        name: name,
-        category: category,
-        quantity: quantity,
-        costPrice: costPrice,
-        sellPrice: sellPrice,
-        addedBy: username,
-        addedDate: new Date().toISOString()
-    };
+            if (!category) {
+                alert('Kategori harus dipilih!');
+                return;
+            }
 
-    showSyncIndicator();
-    
-    database.ref('stocks/' + stockId).set(stock)
-        .then(() => {
-            // Reset form
-            document.getElementById('stockName').value = '';
-            document.getElementById('stockCategory').value = '';
-            document.getElementById('stockQuantity').value = '';
-            
+            if (!quantity || quantity < 1) {
+                alert('Jumlah stok minimal 1!');
+                return;
+            }
+
+            let costPrice, sellPrice;
+
             if (userRole === 'owner') {
-                document.getElementById('stockCostPrice').value = '';
-                document.getElementById('stockSellPrice').value = '';
-            }
-            
-            if (userRole === 'staff') {
-                alert('✅ Stok berhasil ditambahkan!\n\nOwner akan menentukan harga jual.');
+                const costPriceInput = document.getElementById('stockCostPrice');
+                const sellPriceInput = document.getElementById('stockSellPrice');
+
+                costPrice = parseInt(costPriceInput.value) || 0;
+                sellPrice = parseInt(sellPriceInput.value) || 0;
+
+                if (costPrice <= 0) {
+                    alert('Harga beli harus diisi dan lebih dari 0!');
+                    return;
+                }
+
+                if (sellPrice <= 0) {
+                    alert('Harga jual harus diisi dan lebih dari 0!');
+                    return;
+                }
+
+                if (sellPrice < costPrice) {
+                    if (!confirm('Harga jual lebih rendah dari harga beli. Yakin ingin melanjutkan?')) {
+                        return;
+                    }
+                }
             } else {
-                alert('✅ Stok berhasil ditambahkan!');
+                // Staff mode - harga akan diset oleh owner
+                costPrice = 0;
+                sellPrice = 0;
             }
-            
-            // Refresh data
-            loadProducts();
-            loadStocks();
-            checkEmptyStock();
-            checkLowStock();
-        })
-        .catch((error) => {
-            console.error('Error adding stock:', error);
-            alert('❌ Gagal menambahkan stok: ' + error.message);
-        });
-}
 
-// PERBAIKAN FUNGSI DELETE STOCK
-function deleteStock(stockId) {
-    console.log('Delete stock called with ID:', stockId);
-    
-    // Validasi role
-    if (userRole !== 'owner') {
-        alert('❌ Hanya owner yang bisa menghapus stok!');
-        return;
-    }
+            const stockId = Date.now();
+            const stock = {
+                id: stockId,
+                name: name,
+                category: category,
+                quantity: quantity,
+                costPrice: costPrice,
+                sellPrice: sellPrice,
+                addedBy: username,
+                addedDate: new Date().toISOString()
+            };
 
-    // Validasi stockId
-    if (!stockId) {
-        alert('❌ ID stok tidak valid!');
-        return;
-    }
+            showSyncIndicator();
 
-    // Cari stock berdasarkan ID
-    const stock = stocks.find(s => s.id === parseInt(stockId));
-    
-    if (!stock) {
-        alert('❌ Stok tidak ditemukan!');
-        console.error('Stock not found with ID:', stockId);
-        return;
-    }
+            database.ref('stocks/' + stockId).set(stock)
+                .then(() => {
+                    // Reset form
+                    document.getElementById('stockName').value = '';
+                    document.getElementById('stockCategory').value = '';
+                    document.getElementById('stockQuantity').value = '';
 
-    // Konfirmasi penghapusan
-    if (!confirm(`⚠️ Hapus stok "${stock.name}"?\n\nStok: ${stock.quantity} unit\nHarga: Rp ${formatNumber(stock.sellPrice)}\n\nTindakan ini tidak dapat dibatalkan!`)) {
-        return;
-    }
+                    if (userRole === 'owner') {
+                        document.getElementById('stockCostPrice').value = '';
+                        document.getElementById('stockSellPrice').value = '';
+                    }
 
-    showSyncIndicator();
-    
-    // Hapus dari Firebase
-    database.ref('stocks/' + stockId).remove()
-        .then(() => {
-            alert('✅ Stok berhasil dihapus!');
-            
-            // Refresh data
-            loadProducts();
-            loadStocks();
-            checkEmptyStock();
-            checkLowStock();
-        })
-        .catch((error) => {
-            console.error('Error deleting stock:', error);
-            alert('❌ Gagal menghapus stok: ' + error.message);
-        });
-}
+                    if (userRole === 'staff') {
+                        alert('✅ Stok berhasil ditambahkan!\n\nOwner akan menentukan harga jual.');
+                    } else {
+                        alert('✅ Stok berhasil ditambahkan!');
+                    }
 
-// PERBAIKAN FUNGSI LOAD STOCKS - AGAR TOMBOL DELETE BERFUNGSI
-function loadStocks() {
-    const stockList = document.getElementById('stockList');
-    if (!stockList) return;
-    
-    if (stocks.length === 0) {
-        stockList.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-gray-400">Belum ada data stok</td></tr>';
-        // Sembunyikan alert jika tidak ada data
-        const emptyAlert = document.getElementById('emptyStockAlert');
-        const lowAlert = document.getElementById('lowStockAlert');
-        if (emptyAlert) emptyAlert.classList.add('hidden');
-        if (lowAlert) lowAlert.classList.add('hidden');
-        return;
-    }
-
-    let html = '';
-    stocks.forEach((stock) => {
-        let statusClass, statusText;
-        
-        if (stock.quantity === 0) {
-            statusClass = 'bg-gray-100 text-gray-800';
-            statusText = 'Kosong';
-        } else if (stock.quantity < 10) {
-            statusClass = 'bg-red-100 text-red-800';
-            statusText = 'Stok Menipis';
-        } else {
-            statusClass = 'bg-green-100 text-green-800';
-            statusText = 'Stok Aman';
+                    // Refresh data
+                    loadProducts();
+                    loadStocks();
+                    checkEmptyStock();
+                    checkLowStock();
+                })
+                .catch((error) => {
+                    console.error('Error adding stock:', error);
+                    alert('❌ Gagal menambahkan stok: ' + error.message);
+                });
         }
-        
-        let actionColumn = '';
-        if (userRole === 'owner') {
-            // PERBAIKAN: Escape JSON dengan benar dan gunakan data-stock untuk menyimpan info
-            const stockJSON = JSON.stringify(stock).replace(/"/g, '&quot;');
-            
-            actionColumn = `
+
+        // PERBAIKAN FUNGSI DELETE STOCK
+        function deleteStock(stockId) {
+            console.log('Delete stock called with ID:', stockId);
+
+            // Validasi role
+            if (userRole !== 'owner') {
+                alert('❌ Hanya owner yang bisa menghapus stok!');
+                return;
+            }
+
+            // Validasi stockId
+            if (!stockId) {
+                alert('❌ ID stok tidak valid!');
+                return;
+            }
+
+            // Cari stock berdasarkan ID
+            const stock = stocks.find(s => s.id === parseInt(stockId));
+
+            if (!stock) {
+                alert('❌ Stok tidak ditemukan!');
+                console.error('Stock not found with ID:', stockId);
+                return;
+            }
+
+            // Konfirmasi penghapusan
+            if (!confirm(`⚠️ Hapus stok "${stock.name}"?\n\nStok: ${stock.quantity} unit\nHarga: Rp ${formatNumber(stock.sellPrice)}\n\nTindakan ini tidak dapat dibatalkan!`)) {
+                return;
+            }
+
+            showSyncIndicator();
+
+            // Hapus dari Firebase
+            database.ref('stocks/' + stockId).remove()
+                .then(() => {
+                    alert('✅ Stok berhasil dihapus!');
+
+                    // Refresh data
+                    loadProducts();
+                    loadStocks();
+                    checkEmptyStock();
+                    checkLowStock();
+                })
+                .catch((error) => {
+                    console.error('Error deleting stock:', error);
+                    alert('❌ Gagal menghapus stok: ' + error.message);
+                });
+        }
+
+        // PERBAIKAN FUNGSI LOAD STOCKS - AGAR TOMBOL DELETE BERFUNGSI
+        function loadStocks() {
+            const stockList = document.getElementById('stockList');
+            if (!stockList) return;
+
+            if (stocks.length === 0) {
+                stockList.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-gray-400">Belum ada data stok</td></tr>';
+                // Sembunyikan alert jika tidak ada data
+                const emptyAlert = document.getElementById('emptyStockAlert');
+                const lowAlert = document.getElementById('lowStockAlert');
+                if (emptyAlert) emptyAlert.classList.add('hidden');
+                if (lowAlert) lowAlert.classList.add('hidden');
+                return;
+            }
+
+            let html = '';
+            stocks.forEach((stock) => {
+                let statusClass, statusText;
+
+                if (stock.quantity === 0) {
+                    statusClass = 'bg-gray-100 text-gray-800';
+                    statusText = 'Kosong';
+                } else if (stock.quantity < 10) {
+                    statusClass = 'bg-red-100 text-red-800';
+                    statusText = 'Stok Menipis';
+                } else {
+                    statusClass = 'bg-green-100 text-green-800';
+                    statusText = 'Stok Aman';
+                }
+
+                let actionColumn = '';
+                if (userRole === 'owner') {
+                    // PERBAIKAN: Escape JSON dengan benar dan gunakan data-stock untuk menyimpan info
+                    const stockJSON = JSON.stringify(stock).replace(/"/g, '&quot;');
+
+                    actionColumn = `
                 <td class="py-3 px-4">
                     <button 
-                        onclick='openEditStockModal(${JSON.stringify(stock)})' 
+                        // Di HTML (Stringify yang aman)
+                        onclick='openEditStockModal(' + stock.id + ')' 
                         type="button" 
                         class="text-indigo-600 hover:text-indigo-800 text-sm font-medium mr-3"
                     >
@@ -2080,9 +2250,9 @@ function loadStocks() {
                     </button>
                 </td>
             `;
-        }
+                }
 
-        html += `
+                html += `
             <tr class="border-b border-gray-100 hover:bg-gray-50 stock-row" 
                 data-name="${stock.name.toLowerCase()}" 
                 data-category="${stock.category.toLowerCase()}"
@@ -2100,103 +2270,103 @@ function loadStocks() {
                 ${actionColumn}
             </tr>
         `;
-    });
+            });
 
-    stockList.innerHTML = html;
-    
-    // Panggil fungsi peringatan
-    checkEmptyStock();
-    checkLowStock();
-}
+            stockList.innerHTML = html;
 
-// PERBAIKAN FUNGSI SAVE EDIT STOCK
-function saveEditStock(event) {
-    event.preventDefault();
-    
-    const id = parseInt(document.getElementById('editStockId').value);
-    const name = document.getElementById('editStockName').value.trim();
-    const category = document.getElementById('editStockCategory').value;
-    const quantity = parseInt(document.getElementById('editStockQuantity').value);
-    const costPrice = parseInt(document.getElementById('editStockCostPrice').value);
-    
-    // Validasi
-    if (!name) {
-        alert('Nama barang harus diisi!');
-        return;
-    }
-    
-    if (!category) {
-        alert('Kategori harus dipilih!');
-        return;
-    }
-    
-    if (quantity < 0) {
-        alert('Jumlah stok tidak boleh negatif!');
-        return;
-    }
-    
-    if (costPrice <= 0) {
-        alert('Harga beli harus lebih dari 0!');
-        return;
-    }
-    
-    let sellPrice;
-    if (userRole === 'owner') {
-        sellPrice = parseInt(document.getElementById('editStockSellPrice').value);
-        
-        if (sellPrice <= 0) {
-            alert('Harga jual harus lebih dari 0!');
-            return;
-        }
-        
-        if (sellPrice < costPrice) {
-            if (!confirm('Harga jual lebih rendah dari harga beli. Yakin ingin melanjutkan?')) {
-                return;
-            }
-        }
-    } else {
-        // Staff tidak bisa edit harga jual
-        sellPrice = Math.round(costPrice * 1.3);
-    }
-    
-    const originalStock = stocks.find(s => s.id === id);
-    
-    if (!originalStock) {
-        alert('❌ Stok tidak ditemukan!');
-        return;
-    }
-    
-    const updatedStock = {
-        id: id,
-        name: name,
-        category: category,
-        quantity: quantity,
-        costPrice: costPrice,
-        sellPrice: sellPrice,
-        addedBy: originalStock.addedBy,
-        addedDate: originalStock.addedDate,
-        lastEditedBy: username,
-        lastEditedDate: new Date().toISOString()
-    };
-    
-    showSyncIndicator();
-    
-    database.ref('stocks/' + id).set(updatedStock)
-        .then(() => {
-            closeEditStockModal();
-            alert('✅ Stok berhasil diupdate!');
-            
-            // Refresh data
-            loadProducts();
-            loadStocks();
+            // Panggil fungsi peringatan
             checkEmptyStock();
             checkLowStock();
-        })
-        .catch((error) => {
-            console.error('Error updating stock:', error);
-            alert('❌ Gagal mengupdate stok: ' + error.message);
-        });
-}
+        }
+
+        // PERBAIKAN FUNGSI SAVE EDIT STOCK
+        function saveEditStock(event) {
+            event.preventDefault();
+
+            const id = parseInt(document.getElementById('editStockId').value);
+            const name = document.getElementById('editStockName').value.trim();
+            const category = document.getElementById('editStockCategory').value;
+            const quantity = parseInt(document.getElementById('editStockQuantity').value);
+            const costPrice = parseInt(document.getElementById('editStockCostPrice').value);
+
+            // Validasi
+            if (!name) {
+                alert('Nama barang harus diisi!');
+                return;
+            }
+
+            if (!category) {
+                alert('Kategori harus dipilih!');
+                return;
+            }
+
+            if (quantity < 0) {
+                alert('Jumlah stok tidak boleh negatif!');
+                return;
+            }
+
+            if (costPrice <= 0) {
+                alert('Harga beli harus lebih dari 0!');
+                return;
+            }
+
+            let sellPrice;
+            if (userRole === 'owner') {
+                sellPrice = parseInt(document.getElementById('editStockSellPrice').value);
+
+                if (sellPrice <= 0) {
+                    alert('Harga jual harus lebih dari 0!');
+                    return;
+                }
+
+                if (sellPrice < costPrice) {
+                    if (!confirm('Harga jual lebih rendah dari harga beli. Yakin ingin melanjutkan?')) {
+                        return;
+                    }
+                }
+            } else {
+                // Staff tidak bisa edit harga jual
+                sellPrice = Math.round(costPrice * 1.3);
+            }
+
+            const originalStock = stocks.find(s => s.id === id);
+
+            if (!originalStock) {
+                alert('❌ Stok tidak ditemukan!');
+                return;
+            }
+
+            const updatedStock = {
+                id: id,
+                name: name,
+                category: category,
+                quantity: quantity,
+                costPrice: costPrice,
+                sellPrice: sellPrice,
+                addedBy: originalStock.addedBy,
+                addedDate: originalStock.addedDate,
+                lastEditedBy: username,
+                lastEditedDate: new Date().toISOString()
+            };
+
+            showSyncIndicator();
+
+            database.ref('stocks/' + id).set(updatedStock)
+                .then(() => {
+                    closeEditStockModal();
+                    alert('✅ Stok berhasil diupdate!');
+
+                    // Refresh data
+                    loadProducts();
+                    loadStocks();
+                    checkEmptyStock();
+                    checkLowStock();
+                })
+                .catch((error) => {
+                    console.error('Error updating stock:', error);
+                    alert('❌ Gagal mengupdate stok: ' + error.message);
+                });
+        }
 
         function openEditStockModal(stock) {
             document.getElementById('editStockId').value = stock.id;
@@ -2205,14 +2375,14 @@ function saveEditStock(event) {
             document.getElementById('editStockQuantity').value = stock.quantity;
             document.getElementById('editStockCostPrice').value = stock.costPrice;
             document.getElementById('editStockSellPrice').value = stock.sellPrice;
-            
+
             const sellPriceField = document.getElementById('editSellPriceField');
             if (userRole === 'staff') {
                 sellPriceField.style.display = 'none';
             } else {
                 sellPriceField.style.display = 'block';
             }
-            
+
             document.getElementById('editStockModal').classList.remove('hidden');
         }
 
@@ -2222,22 +2392,22 @@ function saveEditStock(event) {
 
         function saveEditStock(event) {
             event.preventDefault();
-            
+
             const id = document.getElementById('editStockId').value;
             const name = document.getElementById('editStockName').value;
             const category = document.getElementById('editStockCategory').value;
             const quantity = parseInt(document.getElementById('editStockQuantity').value);
             const costPrice = parseInt(document.getElementById('editStockCostPrice').value);
-            
+
             let sellPrice;
             if (userRole === 'owner') {
                 sellPrice = parseInt(document.getElementById('editStockSellPrice').value);
             } else {
                 sellPrice = Math.round(costPrice * 1.3);
             }
-            
+
             const originalStock = stocks.find(s => s.id === parseInt(id));
-            
+
             const updatedStock = {
                 id: parseInt(id),
                 name,
@@ -2250,9 +2420,9 @@ function saveEditStock(event) {
                 lastEditedBy: username,
                 lastEditedDate: new Date().toISOString()
             };
-            
+
             showSyncIndicator();
-            
+
             database.ref('stocks/' + id).set(updatedStock)
                 .then(() => {
                     closeEditStockModal();
@@ -2264,61 +2434,61 @@ function saveEditStock(event) {
         }
 
         function deleteStock(stockId) {
-    if (userRole !== 'owner') {
-        alert('Hanya owner yang bisa menghapus stok!');
-        return;
-    }
+            if (userRole !== 'owner') {
+                alert('Hanya owner yang bisa menghapus stok!');
+                return;
+            }
 
-    const stock = stocks.find(s => s.id === stockId);
-    if (!stock) {
-        alert('Stok tidak ditemukan!');
-        return;
-    }
+            const stock = stocks.find(s => s.id === stockId);
+            if (!stock) {
+                alert('Stok tidak ditemukan!');
+                return;
+            }
 
-    if (!confirm(`Hapus stok "${stock.name}"? Tindakan ini tidak dapat dibatalkan!`)) {
-        return;
-    }
+            if (!confirm(`Hapus stok "${stock.name}"? Tindakan ini tidak dapat dibatalkan!`)) {
+                return;
+            }
 
-    showSyncIndicator();
-    
-    database.ref('stocks/' + stockId).remove()
-        .then(() => {
-            alert('Stok berhasil dihapus!');
-            // Data akan otomatis terupdate melalui listener Firebase
-        })
-        .catch((error) => {
-            alert('Error: ' + error.message);
-        });
-}
+            showSyncIndicator();
+
+            database.ref('stocks/' + stockId).remove()
+                .then(() => {
+                    alert('Stok berhasil dihapus!');
+                    // Data akan otomatis terupdate melalui listener Firebase
+                })
+                .catch((error) => {
+                    alert('Error: ' + error.message);
+                });
+        }
 
         function loadStocks() {
-    const stockList = document.getElementById('stockList');
-    if (!stockList) return;
-    
-    if (stocks.length === 0) {
-        stockList.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-gray-400">Belum ada data stok</td></tr>';
-        return;
-    }
+            const stockList = document.getElementById('stockList');
+            if (!stockList) return;
 
-    let html = '';
-    stocks.forEach((stock) => {
-        // Ubah logika status berdasarkan kondisi stok
-        let statusClass, statusText;
-        
-        if (stock.quantity === 0) {
-            statusClass = 'bg-gray-100 text-gray-800';
-            statusText = 'Kosong';
-        } else if (stock.quantity < 10) {
-            statusClass = 'bg-red-100 text-red-800';
-            statusText = 'Stok Menipis';
-        } else {
-            statusClass = 'bg-green-100 text-green-800';
-            statusText = 'Stok Aman';
-        }
-        
-        let actionColumn = '';
-        if (userRole === 'owner') {
-            actionColumn = `
+            if (stocks.length === 0) {
+                stockList.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-gray-400">Belum ada data stok</td></tr>';
+                return;
+            }
+
+            let html = '';
+            stocks.forEach((stock) => {
+                // Ubah logika status berdasarkan kondisi stok
+                let statusClass, statusText;
+
+                if (stock.quantity === 0) {
+                    statusClass = 'bg-gray-100 text-gray-800';
+                    statusText = 'Kosong';
+                } else if (stock.quantity < 10) {
+                    statusClass = 'bg-red-100 text-red-800';
+                    statusText = 'Stok Menipis';
+                } else {
+                    statusClass = 'bg-green-100 text-green-800';
+                    statusText = 'Stok Aman';
+                }
+
+                let actionColumn = '';
+                if (userRole === 'owner') {
+                    actionColumn = `
                 <td class="py-3 px-4">
                     <button onclick='openEditStockModal(${JSON.stringify(stock).replace(/'/g, "\\'")})'  type="button" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium mr-2">
                         Edit
@@ -2331,9 +2501,9 @@ function saveEditStock(event) {
                     </button>
                 </td>
             `;
-        }
+                }
 
-        html += `
+                html += `
             <tr class="border-b border-gray-100 hover:bg-gray-50 stock-row" data-name="${stock.name.toLowerCase()}" data-category="${stock.category.toLowerCase()}">
                 <td class="py-3 px-4">${stock.name}</td>
                 <td class="py-3 px-4">${stock.category}</td>
@@ -2348,20 +2518,20 @@ function saveEditStock(event) {
                 ${actionColumn}
             </tr>
         `;
-    });
+            });
 
-    stockList.innerHTML = html;
-}
+            stockList.innerHTML = html;
+        }
 
 
         function searchStocks() {
             const searchValue = document.getElementById('searchStock').value.toLowerCase();
             const rows = document.querySelectorAll('.stock-row');
-            
+
             rows.forEach(row => {
                 const name = row.getAttribute('data-name');
                 const category = row.getAttribute('data-category');
-                
+
                 if (name.includes(searchValue) || category.includes(searchValue)) {
                     row.style.display = '';
                 } else {
@@ -2371,101 +2541,101 @@ function saveEditStock(event) {
         }
 
 
-// Tambahkan fungsi-fungsi ini di dalam tag <script>
+        // Tambahkan fungsi-fungsi ini di dalam tag <script>
 
-// Fungsi cek stok kosong (quantity = 0)
-function checkEmptyStock() {
-    const emptyStockAlert = document.getElementById('emptyStockAlert');
-    const emptyStockList = document.getElementById('emptyStockList');
-    
-    if (!emptyStockAlert || !emptyStockList) return;
-    
-    // Filter item dengan stok = 0
-    const emptyItems = stocks.filter(stock => stock.quantity === 0);
-    
-    if (emptyItems.length > 0) {
-        emptyStockAlert.classList.remove('hidden');
-        
-        let itemsHtml = '<ul class="list-disc list-inside space-y-1">';
-        emptyItems.forEach(item => {
-            itemsHtml += `
+        // Fungsi cek stok kosong (quantity = 0)
+        function checkEmptyStock() {
+            const emptyStockAlert = document.getElementById('emptyStockAlert');
+            const emptyStockList = document.getElementById('emptyStockList');
+
+            if (!emptyStockAlert || !emptyStockList) return;
+
+            // Filter item dengan stok = 0
+            const emptyItems = stocks.filter(stock => stock.quantity === 0);
+
+            if (emptyItems.length > 0) {
+                emptyStockAlert.classList.remove('hidden');
+
+                let itemsHtml = '<ul class="list-disc list-inside space-y-1">';
+                emptyItems.forEach(item => {
+                    itemsHtml += `
                 <li>
                     <span class="font-semibold">${item.name}</span> 
                     <span class="text-gray-500">(${item.category})</span> 
                     - <span class="font-bold text-gray-800">STOK HABIS</span>
                 </li>
             `;
-        });
-        itemsHtml += '</ul>';
-        
-        emptyStockList.innerHTML = itemsHtml;
-    } else {
-        emptyStockAlert.classList.add('hidden');
-    }
-}
+                });
+                itemsHtml += '</ul>';
 
-// Fungsi cek stok menipis (quantity < 10 dan > 0)
-function checkLowStock() {
-    const lowStockAlert = document.getElementById('lowStockAlert');
-    const lowStockList = document.getElementById('lowStockList');
-    
-    if (!lowStockAlert || !lowStockList) return;
-    
-    // Filter item dengan stok < 10 tapi TIDAK 0 (agar tidak tumpang tindih dengan empty stock)
-    const lowStockItems = stocks.filter(stock => stock.quantity > 0 && stock.quantity < 10);
-    
-    if (lowStockItems.length > 0) {
-        lowStockAlert.classList.remove('hidden');
-        
-        let itemsHtml = '<ul class="list-disc list-inside space-y-1">';
-        lowStockItems.forEach(item => {
-            itemsHtml += `
+                emptyStockList.innerHTML = itemsHtml;
+            } else {
+                emptyStockAlert.classList.add('hidden');
+            }
+        }
+
+        // Fungsi cek stok menipis (quantity < 10 dan > 0)
+        function checkLowStock() {
+            const lowStockAlert = document.getElementById('lowStockAlert');
+            const lowStockList = document.getElementById('lowStockList');
+
+            if (!lowStockAlert || !lowStockList) return;
+
+            // Filter item dengan stok < 10 tapi TIDAK 0 (agar tidak tumpang tindih dengan empty stock)
+            const lowStockItems = stocks.filter(stock => stock.quantity > 0 && stock.quantity < 10);
+
+            if (lowStockItems.length > 0) {
+                lowStockAlert.classList.remove('hidden');
+
+                let itemsHtml = '<ul class="list-disc list-inside space-y-1">';
+                lowStockItems.forEach(item => {
+                    itemsHtml += `
                 <li>
                     <span class="font-semibold">${item.name}</span> 
                     <span class="text-gray-500">(${item.category})</span> 
                     - Sisa <span class="font-bold text-red-600">${item.quantity}</span> unit
                 </li>
             `;
-        });
-        itemsHtml += '</ul>';
-        
-        lowStockList.innerHTML = itemsHtml;
-    } else {
-        lowStockAlert.classList.add('hidden');
-    }
-}
+                });
+                itemsHtml += '</ul>';
 
-// Modifikasi fungsi loadStocks() untuk memanggil KEDUA fungsi
-function loadStocks() {
-    const stockList = document.getElementById('stockList');
-    if (!stockList) return;
-    
-    if (stocks.length === 0) {
-        stockList.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-gray-400">Belum ada data stok</td></tr>';
-        // Sembunyikan alert jika tidak ada data
-        document.getElementById('emptyStockAlert')?.classList.add('hidden');
-        document.getElementById('lowStockAlert')?.classList.add('hidden');
-        return;
-    }
-
-    let html = '';
-    stocks.forEach((stock) => {
-        let statusClass, statusText;
-        
-        if (stock.quantity === 0) {
-            statusClass = 'bg-gray-100 text-gray-800';
-            statusText = 'Kosong';
-        } else if (stock.quantity < 10) {
-            statusClass = 'bg-red-100 text-red-800';
-            statusText = 'Stok Menipis';
-        } else {
-            statusClass = 'bg-green-100 text-green-800';
-            statusText = 'Stok Aman';
+                lowStockList.innerHTML = itemsHtml;
+            } else {
+                lowStockAlert.classList.add('hidden');
+            }
         }
-        
-        let actionColumn = '';
-        if (userRole === 'owner') {
-            actionColumn = `
+
+        // Modifikasi fungsi loadStocks() untuk memanggil KEDUA fungsi
+        function loadStocks() {
+            const stockList = document.getElementById('stockList');
+            if (!stockList) return;
+
+            if (stocks.length === 0) {
+                stockList.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-gray-400">Belum ada data stok</td></tr>';
+                // Sembunyikan alert jika tidak ada data
+                document.getElementById('emptyStockAlert')?.classList.add('hidden');
+                document.getElementById('lowStockAlert')?.classList.add('hidden');
+                return;
+            }
+
+            let html = '';
+            stocks.forEach((stock) => {
+                let statusClass, statusText;
+
+                if (stock.quantity === 0) {
+                    statusClass = 'bg-gray-100 text-gray-800';
+                    statusText = 'Kosong';
+                } else if (stock.quantity < 10) {
+                    statusClass = 'bg-red-100 text-red-800';
+                    statusText = 'Stok Menipis';
+                } else {
+                    statusClass = 'bg-green-100 text-green-800';
+                    statusText = 'Stok Aman';
+                }
+
+                let actionColumn = '';
+                if (userRole === 'owner') {
+                    actionColumn = `
                 <td class="py-3 px-4">
                     <button onclick='openEditStockModal(${JSON.stringify(stock).replace(/'/g, "\\'")})'  type="button" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium mr-2">
                         Edit
@@ -2478,9 +2648,9 @@ function loadStocks() {
                     </button>
                 </td>
             `;
-        }
+                }
 
-        html += `
+                html += `
             <tr class="border-b border-gray-100 hover:bg-gray-50 stock-row" data-name="${stock.name.toLowerCase()}" data-category="${stock.category.toLowerCase()}">
                 <td class="py-3 px-4">${stock.name}</td>
                 <td class="py-3 px-4">${stock.category}</td>
@@ -2495,58 +2665,58 @@ function loadStocks() {
                 ${actionColumn}
             </tr>
         `;
-    });
+            });
 
-    stockList.innerHTML = html;
-    
-    // Panggil KEDUA fungsi peringatan
-    checkEmptyStock();  // Cek stok = 0
-    checkLowStock();    // Cek stok < 10 dan > 0
-}
+            stockList.innerHTML = html;
+
+            // Panggil KEDUA fungsi peringatan
+            checkEmptyStock();  // Cek stok = 0
+            checkLowStock();    // Cek stok < 10 dan > 0
+        }
 
         function loadTransactions() {
-    const tbody = document.getElementById('transactionHistory');
-    if (!tbody) return;
-    
-    const isStaff = userRole === 'staff';
-    const colspan = isStaff ? '6' : '7';
-    
-    // Filter transaksi berdasarkan currentFilter
-    let filteredTransactions = transactions;
-    
-    if (currentFilter !== 'all') {
-        const now = new Date();
-        filteredTransactions = transactions.filter(t => {
-            const tDate = new Date(t.date);
-            
-            if (currentFilter === 'today') {
-                return tDate.toDateString() === now.toDateString();
-            } else if (currentFilter === 'week') {
-                const weekAgo = new Date(now);
-                weekAgo.setDate(now.getDate() - 7);
-                return tDate >= weekAgo && tDate <= now;
-            } else if (currentFilter === 'month') {
-                return tDate.getMonth() === now.getMonth() && tDate.getFullYear() === now.getFullYear();
-            }
-            return true;  // Fallback untuk 'all'
-        });
-    }
-    
-    if (filteredTransactions.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="${colspan}" class="text-center py-8 text-gray-400">Tidak ada transaksi untuk periode ini</td></tr>`;
-        return;
-    }
+            const tbody = document.getElementById('transactionHistory');
+            if (!tbody) return;
 
-    let html = '';
-    filteredTransactions.slice().reverse().forEach(transaction => {
-        const paymentMethod = transaction.paymentMethod || 'cash';
-        const paymentBadge = paymentMethod === 'qris' 
-            ? '<span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-semibold">QRIS</span>'
-            : '<span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">CASH</span>';
-        
-        const profitColumn = isStaff ? '' : `<td class="py-3 px-4 font-semibold text-green-600">Rp ${formatNumber(transaction.profit)}</td>`;
-        
-        html += `
+            const isStaff = userRole === 'staff';
+            const colspan = isStaff ? '6' : '7';
+
+            // Filter transaksi berdasarkan currentFilter
+            let filteredTransactions = transactions;
+
+            if (currentFilter !== 'all') {
+                const now = new Date();
+                filteredTransactions = transactions.filter(t => {
+                    const tDate = new Date(t.date);
+
+                    if (currentFilter === 'today') {
+                        return tDate.toDateString() === now.toDateString();
+                    } else if (currentFilter === 'week') {
+                        const weekAgo = new Date(now);
+                        weekAgo.setDate(now.getDate() - 7);
+                        return tDate >= weekAgo && tDate <= now;
+                    } else if (currentFilter === 'month') {
+                        return tDate.getMonth() === now.getMonth() && tDate.getFullYear() === now.getFullYear();
+                    }
+                    return true;  // Fallback untuk 'all'
+                });
+            }
+
+            if (filteredTransactions.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="${colspan}" class="text-center py-8 text-gray-400">Tidak ada transaksi untuk periode ini</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            filteredTransactions.slice().reverse().forEach(transaction => {
+                const paymentMethod = transaction.paymentMethod || 'cash';
+                const paymentBadge = paymentMethod === 'qris'
+                    ? '<span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-semibold">QRIS</span>'
+                    : '<span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">CASH</span>';
+
+                const profitColumn = isStaff ? '' : `<td class="py-3 px-4 font-semibold text-green-600">Rp ${formatNumber(transaction.profit)}</td>`;
+
+                html += `
             <tr class="border-b border-gray-100 hover:bg-gray-50">
                 <td class="py-3 px-4 font-mono text-sm">${transaction.id}</td>
                 <td class="py-3 px-4 text-sm">${formatDate(transaction.date)}</td>
@@ -2561,20 +2731,20 @@ function loadStocks() {
                 </td>
             </tr>
         `;
-    });
+            });
 
-    tbody.innerHTML = html;
-    
-    if (isStaff) {
-        const table = tbody.closest('table');
-        if (table) {
-            const headers = table.querySelectorAll('thead th');
-            if (headers.length >= 6) {
-                headers[5].style.display = 'none';
+            tbody.innerHTML = html;
+
+            if (isStaff) {
+                const table = tbody.closest('table');
+                if (table) {
+                    const headers = table.querySelectorAll('thead th');
+                    if (headers.length >= 6) {
+                        headers[5].style.display = 'none';
+                    }
+                }
             }
         }
-    }
-}
 
         function viewTransactionDetail(transaction) {
             generateReceipt(transaction);
@@ -2589,45 +2759,38 @@ function loadStocks() {
 
             let csv = 'ID,Tanggal,Items,Metode,Total,Keuntungan,Kasir\n';
             transactions.forEach(t => {
-                csv += `${t.id},"${formatDate(t.date)}",${t.items.length},${(t.paymentMethod||'cash').toUpperCase()},${t.total},${t.profit},${t.user}\n`;
+                csv += t.id + ',"' + formatDate(t.date) + '",' + t.items.length + ',' + (t.paymentMethod || 'cash').toUpperCase() + ',' + t.total + ',' + t.profit + ',' + t.user + '\n';
             });
-
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `laporan-${new Date().toISOString().split('T')[0]}.csv`;
+            a.download = 'laporan-penjualan.csv';
             a.click();
             window.URL.revokeObjectURL(url);
         }
 
         function exportToExcel() {
-            if (transactions.length === 0) {
-                alert('Tidak ada data!');
-                return;
-            }
+    if (transactions.length === 0) {
+        alert('Tidak ada data!');
+        return;
+    }
+    let excelData = '<html><head><meta charset="UTF-8"></head><body><table border="1">';
 
-            let html = '<html><head><meta charset="UTF-8"><style>table{border-collapse:collapse;width:100%}th,td{border:1px solid black;padding:8px}th{background:#f3f4f6;font-weight:bold}</style></head><body><table><thead><tr><th>ID</th><th>Tanggal</th><th>Items</th><th>Metode</th><th>Total</th><th>Keuntungan</th><th>Kasir</th></tr></thead><tbody>';
-            
-            transactions.forEach(t => {
-                html += `<tr><td>${t.id}</td><td>${formatDate(t.date)}</td><td>${t.items.length}</td><td>${(t.paymentMethod||'cash').toUpperCase()}</td><td>Rp ${formatNumber(t.total)}</td><td>Rp ${formatNumber(t.profit)}</td><td>${t.user}</td></tr>`;
-            });
-            
-            html += '</tbody></table></body></html>';
-
-            const blob = new Blob([html], { type: 'application/vnd.ms-excel' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `laporan-${new Date().toISOString().split('T')[0]}.xls`;
-            a.click();
-            window.URL.revokeObjectURL(url);
-        }
-
+    // Bagian ini yang tadi bocor, pastikan ADA di dalam kurung kurawal fungsi ini
+    const blob = new Blob([excelData], { type: 'application/vnd.ms-excel' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'laporan-penjualan.xls';
+    a.click();
+    window.URL.revokeObjectURL(url);
+}
+        
         function updateStats() {
             const today = new Date().toDateString();
             const todayTransactions = transactions.filter(t => new Date(t.date).toDateString() === today);
-            
+
             const totalSales = todayTransactions.reduce((sum, t) => sum + t.total, 0);
             const totalProfit = todayTransactions.reduce((sum, t) => sum + t.profit, 0);
 
@@ -2664,7 +2827,7 @@ function loadStocks() {
 
         function updateSalesChart(startDate = null, endDate = null) {
             if (userRole === 'staff') return;
-            
+
             const ctx = document.getElementById('salesChart');
             if (!ctx) return;
 
@@ -2729,7 +2892,7 @@ function loadStocks() {
                         legend: { position: 'top' },
                         tooltip: {
                             callbacks: {
-                                label: function(context) {
+                                label: function (context) {
                                     return context.dataset.label + ': Rp ' + formatNumber(context.parsed.y);
                                 }
                             }
@@ -2739,7 +2902,7 @@ function loadStocks() {
                         y: {
                             beginAtZero: true,
                             ticks: {
-                                callback: function(value) {
+                                callback: function (value) {
                                     return 'Rp ' + formatNumber(value);
                                 }
                             }
@@ -2769,7 +2932,7 @@ function loadStocks() {
             }
 
             const daysDiff = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
-            
+
             if (daysDiff > 365) {
                 alert('Maksimal range tanggal adalah 365 hari!');
                 return;
@@ -2781,7 +2944,7 @@ function loadStocks() {
         function resetChartDateRange() {
             const startDateInput = document.getElementById('chartStartDate');
             const endDateInput = document.getElementById('chartEndDate');
-            
+
             if (startDateInput) startDateInput.value = '';
             if (endDateInput) endDateInput.value = '';
 
@@ -2790,7 +2953,7 @@ function loadStocks() {
 
         function initializeChartDateInputs() {
             if (userRole === 'staff') return;
-            
+
             const today = new Date();
             const sevenDaysAgo = new Date();
             sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
@@ -2803,23 +2966,23 @@ function loadStocks() {
         }
 
         function filterTransactions(period) {
-    currentFilter = period;  // Simpan filter aktif
-    loadTransactions();      // Reload tabel dengan filter baru
-    
-    // Opsional: Update tampilan tombol aktif (misalnya, ubah warna tombol yang dipilih)
-    const buttons = document.querySelectorAll('#transactionHistory').closest('.bg-white').querySelectorAll('button[onclick*="filterTransactions"]');
-    buttons.forEach(btn => {
-        btn.classList.remove('bg-indigo-500', 'text-white', 'border-indigo-500');
-        btn.classList.add('border-gray-200', 'text-gray-700');
-    });
-    
-    // Cari tombol yang diklik berdasarkan period
-    const activeButton = Array.from(buttons).find(btn => btn.onclick.toString().includes(`'${period}'`));
-    if (activeButton) {
-        activeButton.classList.remove('border-gray-200', 'text-gray-700');
-        activeButton.classList.add('bg-indigo-500', 'text-white', 'border-indigo-500');
-    }
-}
+            currentFilter = period;  // Simpan filter aktif
+            loadTransactions();      // Reload tabel dengan filter baru
+
+            // Opsional: Update tampilan tombol aktif (misalnya, ubah warna tombol yang dipilih)
+            const buttons = document.querySelectorAll('#transactionHistory').closest('.bg-white').querySelectorAll('button[onclick*="filterTransactions"]');
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-indigo-500', 'text-white', 'border-indigo-500');
+                btn.classList.add('border-gray-200', 'text-gray-700');
+            });
+
+            // Cari tombol yang diklik berdasarkan period
+            const activeButton = Array.from(buttons).find(btn => btn.onclick.toString().includes(`'${period}'`));
+            if (activeButton) {
+                activeButton.classList.remove('border-gray-200', 'text-gray-700');
+                activeButton.classList.add('bg-indigo-500', 'text-white', 'border-indigo-500');
+            }
+        }
 
         function saveStoreSettings() {
             const settings = {
@@ -2829,7 +2992,7 @@ function loadStocks() {
             };
 
             showSyncIndicator();
-            
+
             database.ref('settings').set(settings)
                 .then(() => alert('Pengaturan berhasil disimpan!'))
                 .catch((error) => alert('Error: ' + error.message));
@@ -2854,7 +3017,7 @@ function loadStocks() {
             }
 
             alert('Password berhasil diubah!');
-            
+
             document.getElementById('oldPassword').value = '';
             document.getElementById('newPassword').value = '';
             document.getElementById('confirmPassword').value = '';
@@ -2875,9 +3038,9 @@ function loadStocks() {
 
         function formatDate(dateString) {
             const date = new Date(dateString);
-            return date.toLocaleDateString('id-ID', { 
-                year: 'numeric', 
-                month: 'short', 
+            return date.toLocaleDateString('id-ID', {
+                year: 'numeric',
+                month: 'short',
                 day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit'
@@ -2885,21 +3048,22 @@ function loadStocks() {
         }
 
         // Initialize app
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             if (!localStorage.getItem('isAuthenticated')) {
-                window.location.href = 'login.html';
+                window.location.href = 'index.html';
                 return;
             }
-            
+
             // Validasi konfigurasi merchant
             if (GOPAY_MERCHANT_CONFIG.merchantId === "YOUR_MERCHANT_ID") {
                 console.warn("⚠️ PERINGATAN: Konfigurasi GoPay Merchant belum diisi!");
                 console.warn("Silakan update GOPAY_MERCHANT_CONFIG dengan data merchant Anda.");
             }
-            
+
             initializeApp();
             loadDataFromFirebase();
         });
     </script>
 </body>
+
 </html>
