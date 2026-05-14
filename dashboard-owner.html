@@ -356,20 +356,25 @@
                 </div>
                 <div class="flex items-center gap-4">
     <div class="hidden md:block mr-4">
-        <select id="storeSelector" onchange="switchStoreView(this.value)" class="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2">
-            <option value="main">Toko Utama (Pusat)</option>
-            </select>
+        <select id="storeSelector" onchange="switchStoreView(this.value)" 
+    class="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2">
+    <!-- Opsi akan diisi otomatis oleh JavaScript -->
+</select>
     </div>
     
+    <div class="flex items-center gap-4">
+    <!-- Kontainer Teks: Menggunakan text-right agar teks mepet ke arah bundaran -->
     <div class="text-right hidden md:block">
-        <p class="text-sm text-gray-600">Welcome back,</p>
-        ...
-                        <p class="font-semibold text-gray-800" id="usernameDisplay">Loading...</p>
-                    </div>
-                    <div
-                        class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold shadow-lg">
-                        <span id="userInitial">U</span>
-                    </div>
+        <p class="text-[10px] text-gray-500 leading-tight">Welcome back,</p>
+        <p class="font-bold text-gray-800 leading-tight" id="usernameDisplay">Admin</p>
+        <p class="text-[9px] font-bold text-indigo-600 uppercase tracking-tighter" id="userStatusDisplay">Owner</p>
+    </div>
+
+    <!-- Bundaran Inisial -->
+    <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold shadow-lg">
+        <span id="userInitial">A</span>
+    </div>
+</div>
                 </div>
             </div>
         </header>
@@ -909,41 +914,46 @@
             </div>
 
             <!-- 2. Informasi Toko -->
-            <div id="subset-store-info" class="subset-content hidden bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
-                <h3 class="text-lg font-bold text-gray-800 mb-4">Detail Struk & Toko</h3>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Nama Toko (Header Struk)</label>
-                        <input type="text" id="storeName" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Alamat Toko</label>
-                        <textarea id="storeAddress" rows="2" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 outline-none"></textarea>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Nomor Telepon / WhatsApp</label>
-                        <input type="tel" id="storePhone" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 outline-none">
-                    </div>
-                    <button onclick="saveStoreSettings()" class="btn-primary w-full py-3 rounded-lg text-white font-semibold">Simpan Perubahan Struk</button>
-                </div>
-            </div>
+            <!-- Bagian Informasi Toko di HTML -->
+<div id="subset-store-info" class="subset-content hidden bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+    <h3 class="text-lg font-bold text-gray-800 mb-4">Detail Struk & Toko</h3>
+    <div class="space-y-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nama Toko (Header Struk)</label>
+            <input type="text" id="storeName" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 outline-none">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Alamat Toko</label>
+            <textarea id="storeAddress" rows="2" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 outline-none"></textarea>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nomor Telepon / WhatsApp</label>
+            <input type="tel" id="storePhone" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 outline-none">
+        </div>
+        <!-- Pastikan onclick memanggil saveStoreSettings() -->
+        <button onclick="saveStoreSettings()" class="btn-primary w-full py-3 rounded-lg text-white font-semibold">Simpan Perubahan Struk</button>
+    </div>
+</div>
 
             <!-- 3. Manajemen Cabang -->
-            <div id="subset-branches" class="subset-content hidden space-y-6">
-                <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4">Tambah Cabang Toko Baru</h3>
-                    <div class="flex flex-col md:flex-row gap-4">
-                        <input type="text" id="branchName" placeholder="Nama Cabang" class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 outline-none">
-                        <button onclick="addNewBranch()" class="btn-primary px-8 py-3 rounded-lg text-white font-semibold">Tambah Cabang</button>
-                    </div>
-                </div>
-                <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4">Daftar Cabang Anda</h3>
-                    <div id="branchList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <p class="text-gray-400 text-sm italic">Memuat daftar cabang...</p>
-                    </div>
-                </div>
-            </div>
+            <!-- 3. Manajemen Cabang -->
+<div id="subset-branches" class="subset-content hidden space-y-6">
+    <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Tambah Cabang Toko Baru</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <input type="text" id="branchName" placeholder="Nama Cabang" class="px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 outline-none">
+            <input type="text" id="branchPhone" placeholder="No. HP Cabang" class="px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 outline-none">
+            <input type="text" id="branchAddress" placeholder="Alamat Cabang" class="px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 outline-none">
+        </div>
+        <button onclick="addNewBranch()" class="btn-primary w-full md:w-auto px-8 py-3 rounded-lg text-white font-semibold">Tambah Cabang</button>
+    </div>
+    <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Daftar Cabang Anda</h3>
+        <div id="branchList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- List cabang akan muncul di sini -->
+        </div>
+    </div>
+</div>
 
             <!-- 4. Keamanan -->
             <div id="subset-security" class="subset-content hidden bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
@@ -1230,130 +1240,163 @@
             }
         }
 
-        function loadDataFromFirebase() {
-            showSyncIndicator();
+        // Ambil storeId dari localStorage (disimpan saat login di index.html)
+let currentStoreId = localStorage.getItem('storeId');
 
-            database.ref('stocks').on('value', (snapshot) => {
-                stocks = [];
-                if (snapshot.exists()) {
-                    snapshot.forEach((childSnapshot) => {
-                        stocks.push(childSnapshot.val());
-                    });
-                }
-                loadProducts();
-                loadStocks();
-                checkLowStock();
-            });
+function loadDataFromFirebase() {
+    currentStoreId = localStorage.getItem('storeId');
+    if (!currentStoreId) {
+        alert("Sesi toko tidak ditemukan, silakan login ulang.");
+        window.location.href = 'index.html';
+        return;
+    }
 
-            database.ref('transactions').on('value', (snapshot) => {
-                transactions = [];
-                if (snapshot.exists()) {
-                    snapshot.forEach((childSnapshot) => {
-                        transactions.push(childSnapshot.val());
-                    });
-                }
-                loadTransactions();
-                updateStats();
-            });
+    showSyncIndicator();
 
-            database.ref('users').on('value', (snapshot) => {
-                users = [];
-                if (snapshot.exists()) {
-                    snapshot.forEach((childSnapshot) => {
-                        users.push(childSnapshot.val());
-                    });
-                }
-                loadUserList();
-            });
+    const currentUsername = localStorage.getItem('username');
+    if (userRole === 'owner') {
+        const userRef = database.ref('users/' + currentUsername + '/managedStores');
+        userRef.on('value', (snapshot) => {
+            let stores = snapshot.val() || [];
+            
+            // Jika ID toko saat ini belum masuk daftar managedStores, tambahkan permanen
+            if (!stores.includes(currentStoreId)) {
+                stores.push(currentStoreId);
+                userRef.set(stores); // Simpan permanen ke database
+            }
+            
+            renderBranchList(stores);   // Update daftar di tab pengaturan
+    updateStoreSelector(stores); // Update dropdown di header
+        });
+    }
 
-            // Load store info dari Firebase
-            database.ref('settings').on('value', (snapshot) => {
-                if (snapshot.exists()) {
-                    const settings = snapshot.val();
-                    storeInfo = {
-                        name: settings.storeName || 'Your Cashier Store',
-                        address: settings.storeAddress || 'Jl. Contoh No. 123',
-                        phone: settings.storePhone || '0812-3456-7890'
-                    };
-                    // Update form fields
-                    const storeNameField = document.getElementById('storeName');
-                    const storeAddressField = document.getElementById('storeAddress');
-                    const storePhoneField = document.getElementById('storePhone');
+    // 1. Ambil STOK spesifik untuk toko ini saja
+    // Di dalam dashboard-owner.html
+database.ref('stores/' + currentStoreId + '/stocks').on('value', (snapshot) => {
+        stocks = [];
+        snapshot.forEach(child => { stocks.push(child.val()); });
+        loadProducts();
+        loadStocks();
+    });
 
-                    if (storeNameField) storeNameField.value = storeInfo.name;
-                    if (storeAddressField) storeAddressField.value = storeInfo.address;
-                    if (storePhoneField) storePhoneField.value = storeInfo.phone;
-                }
+    database.ref('stores/' + currentStoreId + '/transactions').on('value', (snapshot) => {
+        transactions = [];
+        snapshot.forEach(child => { transactions.push(child.val()); });
+        loadTransactions();
+        updateStats();
+    });
+
+    // 3. Ambil USER (Staff/Owner) spesifik untuk toko ini saja
+    database.ref('stores/' + currentStoreId + '/users').on('value', (snapshot) => {
+        users = [];
+        if (snapshot.exists()) {
+            snapshot.forEach((childSnapshot) => {
+                users.push(childSnapshot.val());
             });
         }
+        loadUserList();
+    });
+    // Di dalam fungsi loadDataFromFirebase()
+database.ref('users').on('value', (snapshot) => {
+    users = [];
+    if (snapshot.exists()) {
+        snapshot.forEach((childSnapshot) => {
+            const userData = childSnapshot.val();
+            // FILTER: Hanya masukkan user yang memiliki storeId yang sama dengan Owner
+            if (userData.storeId === currentStoreId) {
+                users.push(userData);
+            }
+        });
+    }
+    loadUserList(); // Render ulang tabel user aktif
+});
+// Tambahkan ini di dalam fungsi loadDataFromFirebase()
+// Listener untuk Informasi Toko
+database.ref('stores/' + currentStoreId + '/info').on('value', (snapshot) => {
+    if (snapshot.exists()) {
+        const info = snapshot.val();
+        
+        // 1. Update variabel global storeInfo agar struk benar
+        storeInfo = {
+            name: info.name || 'Your Cashier Store',
+            address: info.address || 'Alamat Belum Diatur',
+            phone: info.phone || '08xxx'
+        };
+
+        // 2. Isi nilai ke input di tab Pengaturan (agar user tidak ketik ulang)
+        if (document.getElementById('storeName')) document.getElementById('storeName').value = storeInfo.name;
+        if (document.getElementById('storeAddress')) document.getElementById('storeAddress').value = storeInfo.address;
+        if (document.getElementById('storePhone')) document.getElementById('storePhone').value = storeInfo.phone;
+        
+        // 3. Update nama toko di sidebar/header jika ada
+        const displayElements = document.querySelectorAll('.store-name-display');
+        displayElements.forEach(el => el.innerText = storeInfo.name);
+    }
+});
+}
 
         function addNewUser(event) {
-            event.preventDefault();
+    event.preventDefault();
 
-            const newUsername = document.getElementById('newUsername').value.trim();
-            const newPassword = document.getElementById('newUserPassword').value;
-            const fullName = document.getElementById('newUserFullName').value;
-            const role = document.getElementById('newUserRole').value;
+    const newUsername = document.getElementById('newUsername').value.trim();
+    const newPassword = document.getElementById('newUserPassword').value;
+    const fullName = document.getElementById('newUserFullName').value;
+    const role = document.getElementById('newUserRole').value;
+    const ownerStoreId = localStorage.getItem('storeId'); 
 
-            const existingUser = users.find(u => u.username === newUsername);
-            if (existingUser) {
-                alert('Username sudah digunakan!');
-                return;
-            }
+    const newUser = {
+        name: newUsername,
+        password: newPassword,
+        role: role,
+        storeId: ownerStoreId, // Ini wajib ada
+        isActive: true,
+        fullName: fullName,
+        createdAt: new Date().toISOString()
+    };
 
-            const newUser = {
-                username: newUsername,
-                password: newPassword,
-                name: fullName,
-                role: role,
-                createdAt: new Date().toISOString(),
-                createdBy: username
-            };
+    showSyncIndicator();
 
-            showSyncIndicator();
-
-            database.ref('users/' + newUsername).set(newUser)
-                .then(() => {
-                    event.target.reset();
-                    alert(`Akun berhasil dibuat!\n\nUsername: ${newUsername}\nPassword: ${newPassword}`);
-                })
-                .catch((error) => {
-                    alert('Error: ' + error.message);
-                });
-        }
+    database.ref('users/' + newUsername).set(newUser)
+        .then(() => {
+            event.target.reset();
+            alert(`Akun ${role} berhasil dibuat!`);
+            // loadUserList akan terpanggil otomatis oleh listener .on('value')
+        })
+        .catch((error) => alert('Error: ' + error.message));
+}
 
         function loadUserList() {
-            const userList = document.getElementById('userList');
-            if (!userList) return;
+    const userList = document.getElementById('userList');
+    if (!userList) return;
 
-            if (users.length === 0) {
-                userList.innerHTML = '<tr><td colspan="5" class="text-center py-8 text-gray-400">Belum ada akun</td></tr>';
-                return;
-            }
+    if (users.length === 0) {
+        userList.innerHTML = '<tr><td colspan="3" class="text-center py-8 text-gray-400">Belum ada akun aktif untuk toko ini</td></tr>';
+        return;
+    }
 
-            let html = '';
-            users.forEach(user => {
-                const roleBadge = user.role === 'owner'
-                    ? '<span class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs font-semibold">OWNER</span>'
-                    : '<span class="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold">STAFF</span>';
+    let html = '';
+    users.forEach(user => {
+        const roleBadge = user.role === 'owner'
+            ? '<span class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs font-semibold">OWNER</span>'
+            : '<span class="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold">STAFF</span>';
 
-                html += `
-                    <tr class="border-b border-gray-100 hover:bg-gray-50">
-                        <td class="py-3 px-4 font-medium">${user.username}</td>
-                        <td class="py-3 px-4">${user.name}</td>
-                        <td class="py-3 px-4">${roleBadge}</td>
-                        <td class="py-3 px-4 text-sm text-gray-500">${formatDate(user.createdAt)}</td>
-                        <td class="py-3 px-4">
-                            <button onclick="deleteUser('${user.username}')" type="button" class="text-red-500 hover:text-red-700 text-sm font-medium">
-                                Hapus
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
+        html += `
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="py-3 px-4 font-medium">${user.name}</td>
+                <td class="py-3 px-4">${roleBadge}</td>
+                <td class="py-3 px-4">
+                    ${user.role !== 'owner' ? `
+                        <button onclick="deleteUser('${user.name}')" class="text-red-500 hover:text-red-700 text-sm font-medium">
+                            Hapus
+                        </button>
+                    ` : '<span class="text-xs text-gray-400">Admin Utama</span>'}
+                </td>
+            </tr>
+        `;
+    });
 
-            userList.innerHTML = html;
-        }
+    userList.innerHTML = html;
+}
 
         function deleteUser(delUsername) {
             if (delUsername === 'owner') {
@@ -1410,12 +1453,51 @@
         function initializeApp() {
             document.getElementById('usernameDisplay').textContent = username;
             document.getElementById('userInitial').textContent = username.charAt(0).toUpperCase();
+            const statusDisplay = document.getElementById('userStatusDisplay');
+    if (statusDisplay) {
+        statusDisplay.textContent = userRole === 'owner' ? 'Owner' : 'Staff';
+    }
             document.getElementById('userRoleDisplay').textContent = userRole === 'owner' ? 'Owner - Full Access' : 'Staff - Limited Access';
 
             applyRoleRestrictions();
             initializeChartDateInputs();
             showSection('transaction');
+
+            // Tambahkan kode ini di dalam fungsi initializeApp() atau DOMContentLoaded
+if (userRole === 'staff') {
+    const stockFormContainer = document.querySelector('#section-stock form').parentElement;
+    if (stockFormContainer) {
+        stockFormContainer.innerHTML = `
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Update Stok Barang</h3>
+            <form onsubmit="handleStaffUpdateStock(event)" class="space-y-4">
+<div>
+    <label class="block text-sm font-medium text-gray-700 mb-2">Cari/Pilih Nama Barang</label>
+    <input list="existingProducts" id="staffSearchProduct" required
+        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500"
+        placeholder="Ketik nama barang...">
+    <datalist id="existingProducts">
+        </datalist>
+</div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Jumlah Tambahan</label>
+                    <input type="number" id="staffAddQuantity" min="1" required
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500"
+                        placeholder="Contoh: 10">
+                </div>
+
+                <button type="submit"
+                    class="btn-primary w-full py-3 rounded-lg text-white font-semibold hover:shadow-lg transition-all">
+                    Update Stok
+                </button>
+            </form>
+        `;
+        // Panggil fungsi untuk mengisi datalist
+        loadStaffDatalist();
+    }
+}
         }
+
 
         function applyRoleRestrictions() {
             if (userRole === 'staff') {
@@ -1548,6 +1630,50 @@
                 }
             };
         }
+
+        function loadStaffDatalist() {
+    const datalist = document.getElementById('existingProducts');
+    if (!datalist) return;
+
+    datalist.innerHTML = ''; // Kosongkan dulu
+    stocks.forEach(stock => {
+        const option = document.createElement('option');
+        option.value = stock.name; // Ini yang akan muncul saat diketik
+        datalist.appendChild(option);
+    });
+    console.log("Datalist diperbarui, jumlah item:", stocks.length); // Cek di console (F12)
+}
+
+function handleStaffUpdateStock(event) {
+    event.preventDefault();
+    
+    const productName = document.getElementById('staffSearchProduct').value;
+    const addedQty = parseInt(document.getElementById('staffAddQuantity').value);
+    const currentStoreId = localStorage.getItem('storeId');
+
+    // Cari barang berdasarkan nama (case-insensitive)
+    const stock = stocks.find(s => s.name.toLowerCase() === productName.toLowerCase());
+
+    if (!stock) {
+        alert("Barang tidak ditemukan! Pastikan memilih dari daftar yang tersedia.");
+        return;
+    }
+
+    const newTotal = stock.quantity + addedQty;
+
+    showSyncIndicator();
+
+    database.ref('stores/' + currentStoreId + '/stocks/' + stock.id + '/quantity')
+        .set(newTotal)
+        .then(() => {
+            alert(`Berhasil menambah ${addedQty} stok untuk ${stock.name}. Total sekarang: ${newTotal}`);
+            document.getElementById('staffSearchProduct').value = '';
+            document.getElementById('staffAddQuantity').value = '';
+        })
+        .catch((error) => {
+            alert("Gagal update stok: " + error.message);
+        });
+}
 
         function addToCart() {
             const selectIndex = document.getElementById('productSelect').value;
@@ -1980,23 +2106,25 @@
             alert('Pembayaran dibatalkan. Keranjang belum dikosongkan.');
         }
         function completeTransaction(transaction) {
-            showSyncIndicator();
+    showSyncIndicator();
 
-            transaction.items.forEach(item => {
-                const stockId = item.stockId;
-                const stock = stocks.find(s => s.id === stockId);
-                if (stock) {
-                    const newQuantity = stock.quantity - item.quantity;
-                    database.ref('stocks/' + stockId + '/quantity').set(newQuantity);
-                }
-            });
-
-            database.ref('transactions/' + transaction.id).set(transaction);
-            generateReceipt(transaction);
-            clearCart();
-            selectPaymentMethod('cash');
-            document.getElementById('receiptModal').classList.remove('hidden');
+    // Update stok di path toko yang aktif
+    transaction.items.forEach(item => {
+        const stockId = item.stockId;
+        const stock = stocks.find(s => s.id === stockId);
+        if (stock) {
+            const newQuantity = stock.quantity - item.quantity;
+            database.ref('stores/' + currentStoreId + '/stocks/' + stockId + '/quantity').set(newQuantity);
         }
+    });
+
+    // Simpan transaksi di path toko yang aktif
+    database.ref('stores/' + currentStoreId + '/transactions/' + transaction.id).set(transaction);
+    
+    generateReceipt(transaction);
+    clearCart();
+    document.getElementById('receiptModal').classList.remove('hidden');
+}
 
         function generateReceipt(transaction) {
             const receiptContent = document.getElementById('receiptContent');
@@ -2116,8 +2244,8 @@
 
             showSyncIndicator();
 
-            database.ref('stocks/' + stockId).set(stock)
-                .then(() => {
+            database.ref('stores/' + currentStoreId + '/stocks/' + stockId).set(stock)
+        .then(() => {
                     // Reset form
                     document.getElementById('stockName').value = '';
                     document.getElementById('stockCategory').value = '';
@@ -2146,54 +2274,67 @@
                 });
         }
 
+        function addStockQuantityOnly(stockId) {
+    const inputElement = document.getElementById(`addQty-${stockId}`);
+    const addedQty = parseInt(inputElement.value);
+    const currentStoreId = localStorage.getItem('storeId');
+
+    if (isNaN(addedQty) || addedQty <= 0) {
+        alert("Masukkan jumlah angka yang valid!");
+        return;
+    }
+
+    // Cari data stok lama
+    const stock = stocks.find(s => s.id === stockId);
+    if (!stock) return;
+
+    const newTotal = stock.quantity + addedQty;
+
+    showSyncIndicator();
+
+    // Update hanya field quantity di Firebase
+    database.ref('stores/' + currentStoreId + '/stocks/' + stockId + '/quantity')
+        .set(newTotal)
+        .then(() => {
+            alert(`Berhasil menambah ${addedQty} stok untuk ${stock.name}`);
+            inputElement.value = ''; // Kosongkan input
+        })
+        .catch((error) => {
+            alert("Gagal update stok: " + error.message);
+        });
+}
         // PERBAIKAN FUNGSI DELETE STOCK
         function deleteStock(stockId) {
-            console.log('Delete stock called with ID:', stockId);
+    // 1. Ambil storeId yang sedang aktif
+    const currentStoreId = localStorage.getItem('storeId');
 
-            // Validasi role
-            if (userRole !== 'owner') {
-                alert('❌ Hanya owner yang bisa menghapus stok!');
-                return;
-            }
+    if (userRole !== 'owner') {
+        alert('Hanya owner yang bisa menghapus stok!');
+        return;
+    }
 
-            // Validasi stockId
-            if (!stockId) {
-                alert('❌ ID stok tidak valid!');
-                return;
-            }
+    const stock = stocks.find(s => s.id === stockId);
+    if (!stock) {
+        alert('Stok tidak ditemukan!');
+        return;
+    }
 
-            // Cari stock berdasarkan ID
-            const stock = stocks.find(s => s.id === parseInt(stockId));
+    if (!confirm(`Hapus stok "${stock.name}"?`)) {
+        return;
+    }
 
-            if (!stock) {
-                alert('❌ Stok tidak ditemukan!');
-                console.error('Stock not found with ID:', stockId);
-                return;
-            }
+    showSyncIndicator();
 
-            // Konfirmasi penghapusan
-            if (!confirm(`⚠️ Hapus stok "${stock.name}"?\n\nStok: ${stock.quantity} unit\nHarga: Rp ${formatNumber(stock.sellPrice)}\n\nTindakan ini tidak dapat dibatalkan!`)) {
-                return;
-            }
-
-            showSyncIndicator();
-
-            // Hapus dari Firebase
-            database.ref('stocks/' + stockId).remove()
-                .then(() => {
-                    alert('✅ Stok berhasil dihapus!');
-
-                    // Refresh data
-                    loadProducts();
-                    loadStocks();
-                    checkEmptyStock();
-                    checkLowStock();
-                })
-                .catch((error) => {
-                    console.error('Error deleting stock:', error);
-                    alert('❌ Gagal menghapus stok: ' + error.message);
-                });
-        }
+    // 2. PASTIKAN PATH MENGARAH KE: stores / [ID TOKO] / stocks / [ID STOK]
+    database.ref('stores/' + currentStoreId + '/stocks/' + stockId).remove()
+        .then(() => {
+            alert('Stok berhasil dihapus!');
+            // Data akan otomatis terupdate via listener .on('value')
+        })
+        .catch((error) => {
+            alert('Error saat menghapus: ' + error.message);
+        });
+}
 
         // PERBAIKAN FUNGSI LOAD STOCKS - AGAR TOMBOL DELETE BERFUNGSI
         function loadStocks() {
@@ -2225,37 +2366,30 @@
                     statusText = 'Stok Aman';
                 }
 
-                let actionColumn = '';
-                if (userRole === 'owner') {
-                    // PERBAIKAN: Escape JSON dengan benar dan gunakan data-stock untuk menyimpan info
-                    const stockJSON = JSON.stringify(stock).replace(/"/g, '&quot;');
+                // Di dalam fungsi loadStocks()
+// Di dalam fungsi loadStocks()
+let actionColumn = '';
 
-                    actionColumn = `
-                <td class="py-3 px-4">
-                    <button 
-                        // Di HTML (Stringify yang aman)
-                        onclick='openEditStockModal(' + stock.id + ')' 
-                        type="button" 
-                        class="text-indigo-600 hover:text-indigo-800 text-sm font-medium mr-3"
-                    >
-                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                        </svg>
-                        Edit
-                    </button>
-                    <button 
-                        onclick="deleteStock(${stock.id})" 
-                        type="button" 
-                        class="text-red-500 hover:text-red-700 text-sm font-medium"
-                    >
-                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                        </svg>
-                        Hapus
-                    </button>
-                </td>
-            `;
-                }
+if (userRole === 'owner') {
+    actionColumn = `
+        <td class="py-3 px-4">
+            <button onclick='openEditStockModal(${JSON.stringify(stock).replace(/'/g, "\\'")})' class="text-indigo-600 hover:text-indigo-800 mr-2">Edit</button>
+            <button onclick='deleteStock(${stock.id})' class="text-red-500 hover:text-red-700">Hapus</button>
+        </td>
+    `;
+} else {
+    // Mode Staff: Input angka untuk menambah stok
+    actionColumn = `
+        <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+                <input type="number" id="addQty-${stock.id}" placeholder="+" class="w-16 px-2 py-1 border rounded text-sm focus:border-indigo-500 outline-none">
+                <button onclick="addStockQuantityOnly(${stock.id})" class="bg-green-500 text-white px-2 py-1 rounded text-xs font-bold hover:bg-green-600">
+                    Update
+                </button>
+            </div>
+        </td>
+    `;
+}
 
                 html += `
             <tr class="border-b border-gray-100 hover:bg-gray-50 stock-row" 
@@ -2438,33 +2572,6 @@
                 });
         }
 
-        function deleteStock(stockId) {
-            if (userRole !== 'owner') {
-                alert('Hanya owner yang bisa menghapus stok!');
-                return;
-            }
-
-            const stock = stocks.find(s => s.id === stockId);
-            if (!stock) {
-                alert('Stok tidak ditemukan!');
-                return;
-            }
-
-            if (!confirm(`Hapus stok "${stock.name}"? Tindakan ini tidak dapat dibatalkan!`)) {
-                return;
-            }
-
-            showSyncIndicator();
-
-            database.ref('stocks/' + stockId).remove()
-                .then(() => {
-                    alert('Stok berhasil dihapus!');
-                    // Data akan otomatis terupdate melalui listener Firebase
-                })
-                .catch((error) => {
-                    alert('Error: ' + error.message);
-                });
-        }
 
         function loadStocks() {
             const stockList = document.getElementById('stockList');
@@ -2527,7 +2634,39 @@
 
             stockList.innerHTML = html;
         }
+        
+        function openAddQuantityModal(stockId) {
+    const stock = stocks.find(s => s.id === stockId);
+    if (!stock) return;
 
+    const additionalQty = prompt(`Masukkan jumlah stok tambahan untuk "${stock.name}":`, "0");
+    
+    // Validasi input
+    if (additionalQty === null) return; // Batal
+    const qtyToAdd = parseInt(additionalQty);
+    
+    if (isNaN(qtyToAdd) || qtyToAdd <= 0) {
+        alert("Masukkan jumlah angka yang valid dan lebih dari 0!");
+        return;
+    }
+
+    const newTotalQuantity = stock.quantity + qtyToAdd;
+    updateQuantityOnly(stockId, newTotalQuantity);
+}
+
+        function updateQuantityOnly(stockId, newQty) {
+    const currentStoreId = localStorage.getItem('storeId');
+    showSyncIndicator();
+
+    database.ref('stores/' + currentStoreId + '/stocks/' + stockId + '/quantity')
+        .set(newQty)
+        .then(() => {
+            alert("Stok berhasil diperbarui!");
+        })
+        .catch((error) => {
+            alert("Gagal memperbarui stok: " + error.message);
+        });
+}
 
         function searchStocks() {
             const searchValue = document.getElementById('searchStock').value.toLowerCase();
@@ -3078,51 +3217,325 @@ function exportToExcel() { exportTransactionsToExcel(); }
         }
 
         function saveStoreSettings() {
-            const settings = {
-                storeName: document.getElementById('storeName').value,
-                storeAddress: document.getElementById('storeAddress').value,
-                storePhone: document.getElementById('storePhone').value
-            };
+    // Ambil ID toko yang sedang aktif dibuka (Pusat atau Cabang)
+    const activeStoreId = localStorage.getItem('storeId'); 
+    
+    const newInfo = {
+        name: document.getElementById('storeName').value,
+        address: document.getElementById('storeAddress').value,
+        phone: document.getElementById('storePhone').value,
+        updatedAt: new Date().toISOString()
+    };
 
-            showSyncIndicator();
+    showSyncIndicator();
 
-            database.ref('settings').set(settings)
-                .then(() => alert('Pengaturan berhasil disimpan!'))
-                .catch((error) => alert('Error: ' + error.message));
-        }
+    // Update ke path stores/ID_AKTIF/info
+    database.ref('stores/' + activeStoreId + '/info').update(newInfo)
+        .then(() => {
+            alert('Informasi Toko Berhasil Diperbarui!');
+            // Tidak perlu reload, renderBranchList akan otomatis terpicu jika menggunakan .on()
+        })
+        .catch((error) => {
+            alert('Gagal memperbarui: ' + error.message);
+        });
+}
+
+        function updateStoreSelector(managedIds) {
+    const selector = document.getElementById('storeSelector');
+    if (!selector) return;
+
+    const activeStoreId = localStorage.getItem('storeId');
+    selector.innerHTML = ''; 
+
+    managedIds.forEach(id => {
+        database.ref('stores/' + id + '/info').on('value', (snap) => {
+            const info = snap.val();
+            if (!info) return;
+
+            let existingOption = selector.querySelector(`option[value="${id}"]`);
+            
+            // LOGIKA BARU: Cek properti isBranch di dalam database info
+            // Jika info.isBranch tidak ada atau false, maka itu PUSAT
+            const labelSuffix = (info.isBranch === true) ? ' (Cabang)' : ' (Pusat)';
+            const fullLabel = info.name + labelSuffix;
+
+            if (existingOption) {
+                existingOption.textContent = fullLabel;
+            } else {
+                const option = document.createElement('option');
+                option.value = id;
+                option.textContent = fullLabel;
+                selector.appendChild(option);
+            }
+
+            selector.value = activeStoreId;
+        });
+    });
+}
+        function updateStoreInfo(event) {
+    event.preventDefault();
+    
+    const storeName = document.getElementById('editStoreName').value;
+    const storeAddress = document.getElementById('editStoreAddress').value;
+    const storeSlogan = document.getElementById('editStoreSlogan').value;
+    const currentStoreId = localStorage.getItem('storeId');
+
+    showSyncIndicator();
+
+    const storeInfo = {
+        name: storeName,
+        address: storeAddress,
+        slogan: storeSlogan,
+        updatedAt: new Date().toISOString()
+    };
+
+    // Simpan ke: stores / [ID TOKO] / info
+    database.ref('stores/' + currentStoreId + '/info').set(storeInfo)
+        .then(() => {
+            alert('Informasi toko berhasil diperbarui!');
+            // Update tampilan header secara lokal jika perlu
+            document.getElementById('displayStoreName').innerText = storeName;
+        })
+        .catch((error) => {
+            alert('Gagal menyimpan: ' + error.message);
+        });
+}
 
         function addNewBranch() {
-    const branchName = document.getElementById('branchName').value;
+    const name = document.getElementById('branchName').value.trim();
+    const phone = document.getElementById('branchPhone').value.trim();
+    const address = document.getElementById('branchAddress').value.trim();
     const currentUsername = localStorage.getItem('username');
+    
+    if (!name || !phone || !address) {
+        alert('Mohon lengkapi Nama, No HP, dan Alamat cabang!');
+        return;
+    }
+
     const branchId = 'BRN-' + Date.now();
+    showSyncIndicator();
 
-    if(!branchName) return alert('Nama cabang harus diisi');
+    // 1. Simpan detail info di toko baru
+    const branchData = {
+        info: {
+            name: name,
+            phone: phone,
+            address: address,
+            isBranch: true,
+            parentOwner: currentUsername,
+            createdAt: new Date().toISOString()
+        }
+    };
 
-    // 1. Buat data toko cabang di 'stores/'
-    database.ref('stores/' + branchId).set({
-        storeName: branchName,
-        isBranch: true,
-        parentOwner: currentUsername
-    });
+    database.ref('stores/' + branchId).set(branchData)
+        .then(() => {
+            // 2. Tambahkan branchId ke managedStores milik Owner
+            const userRef = database.ref('users/' + currentUsername + '/managedStores');
+            userRef.once('value', (snapshot) => {
+                let stores = snapshot.val() || [];
+                // Pastikan storeId utama juga ada diManagedStores jika belum ada
+                const mainStoreId = localStorage.getItem('storeId');
+                if (!stores.includes(mainStoreId)) stores.push(mainStoreId);
+                
+                stores.push(branchId);
+                
+                userRef.set(stores).then(() => {
+                    alert('Cabang ' + name + ' berhasil ditambahkan!');
+                    // Reset Form
+                    document.getElementById('branchName').value = '';
+                    document.getElementById('branchPhone').value = '';
+                    document.getElementById('branchAddress').value = '';
+                    loadBranchList(); // Refresh tampilan
+                });
+            });
+        });
+}
 
-    // 2. Tambahkan branchId ke dalam managedStores milik user
-    const userRef = database.ref('users/' + currentUsername + '/managedStores');
-    userRef.once('value', (snapshot) => {
-        let stores = snapshot.val() || [];
-        stores.push(branchId);
-        userRef.set(stores);
-        alert('Cabang berhasil ditambahkan!');
-        loadBranchList();
+function loadBranchList() {
+    const branchListDiv = document.getElementById('branchList');
+    if (!branchListDiv) return;
+
+    const currentUsername = localStorage.getItem('username');
+    // Ambil ID toko yang SEDANG AKTIF dari localStorage
+    const activeId = localStorage.getItem('storeId');
+
+    database.ref('users/' + currentUsername + '/managedStores').on('value', (snapshot) => {
+        const ids = snapshot.val() || [];
+        branchListDiv.innerHTML = '';
+
+        ids.forEach(id => {
+            database.ref('stores/' + id + '/info').once('value', (snap) => {
+                const info = snap.val();
+                if (!info) return;
+
+                const isCurrent = (id === activeId);
+                const card = document.createElement('div');
+                card.className = `p-4 rounded-xl border-2 transition-all ${isCurrent ? 'border-indigo-500 bg-indigo-50' : 'border-gray-100 bg-white hover:border-indigo-200'}`;
+                
+                card.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <div class="flex-1">
+                            <h4 class="font-bold text-gray-800 flex items-center">
+                                ${info.name}
+                                ${isCurrent ? '<span class="ml-2 px-2 py-0.5 bg-indigo-600 text-white text-[10px] rounded-full">Aktif</span>' : ''}
+                            </h4>
+                            <p class="text-[11px] text-gray-500 line-clamp-1">${info.address}</p>
+                            <p class="text-[11px] text-indigo-600 font-medium">${info.phone}</p>
+                        </div>
+                        ${!isCurrent ? `
+                            <button onclick="switchStore('${id}')" class="ml-4 px-3 py-1.5 bg-white border border-indigo-500 text-indigo-600 text-xs font-bold rounded-lg hover:bg-indigo-50 transition-colors">
+                                Pindah
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+                branchListDiv.appendChild(card);
+            });
+        });
     });
 }
 
-function switchStoreView(selectedId) {
-    // Ganti storeId di localStorage sementara
-    localStorage.setItem('activeStoreId', selectedId);
+function renderBranchList(managedIds) {
+    const branchListDiv = document.getElementById('branchList');
+    if (!branchListDiv) return;
+
+    branchListDiv.innerHTML = '';
+    const activeStoreId = localStorage.getItem('storeId');
+    const uniqueIds = [...new Set(managedIds)];
+
+    uniqueIds.forEach(id => {
+        database.ref('stores/' + id + '/info').on('value', (snap) => {
+            const info = snap.val();
+            if (!info) return;
+
+            let existingCard = document.getElementById(`card-${id}`);
+            const isCurrent = (id === activeStoreId);
+            const isBranch = info.isBranch === true;
+
+            const cardHTML = `
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h4 class="font-bold text-gray-800 flex items-center gap-2">
+                            ${info.name}
+                            ${isCurrent ? '<span class="text-[10px] bg-indigo-600 text-white px-2 py-0.5 rounded-full italic">Aktif</span>' : ''}
+                        </h4>
+                        <p class="text-[11px] text-gray-500">${info.address}</p>
+                        <p class="text-[11px] text-indigo-600 font-medium">${info.phone}</p>
+                    </div>
+                    <div class="flex gap-2">
+                        ${!isCurrent ? `
+                            <button onclick="switchStore('${id}')" class="px-3 py-1.5 bg-white border border-indigo-500 text-indigo-600 text-xs font-bold rounded-lg hover:bg-indigo-50 transition-all">
+                                Pindah
+                            </button>
+                        ` : ''}
+                        
+                        ${isBranch ? `
+                            <button onclick="deleteBranch('${id}', '${info.name}')" class="px-3 py-1.5 bg-red-50 border border-red-200 text-red-600 text-xs font-bold rounded-lg hover:bg-red-100 transition-all">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+
+            if (existingCard) {
+                existingCard.innerHTML = cardHTML;
+                existingCard.className = `p-4 rounded-xl border-2 transition-all ${isCurrent ? 'border-indigo-500 bg-indigo-50' : 'border-gray-100 bg-white hover:border-indigo-100'}`;
+            } else {
+                const card = document.createElement('div');
+                card.id = `card-${id}`;
+                card.className = `p-4 rounded-xl border-2 transition-all ${isCurrent ? 'border-indigo-500 bg-indigo-50' : 'border-gray-100 bg-white hover:border-indigo-100'}`;
+                card.innerHTML = cardHTML;
+                branchListDiv.appendChild(card);
+            }
+        });
+    });
+}
+
+function deleteBranch(branchId, branchName) {
+    const currentUsername = localStorage.getItem('username');
     
-    // Refresh data dashboard (panggil fungsi loadData kamu lagi)
-    loadDataFromFirebase(); 
-    alert('Sekarang menampilkan data: ' + selectedId);
+    // Proteksi tambahan: Jangan izinkan hapus jika ID ini tidak memiliki flag isBranch
+    database.ref('stores/' + branchId + '/info/isBranch').once('value', (snap) => {
+        if (snap.val() !== true) {
+            alert("❌ Cabang Utama tidak dapat dihapus!");
+            return;
+        }
+
+        if (confirm(`Apakah Anda yakin ingin menghapus cabang "${branchName}"?\n\nSemua data stok dan transaksi di cabang ini akan hilang permanen!`)) {
+            showSyncIndicator();
+
+            // 1. Hapus data toko
+            database.ref('stores/' + branchId).remove()
+                .then(() => {
+                    // 2. Ambil daftar managedStores terbaru
+                    const userRef = database.ref('users/' + currentUsername + '/managedStores');
+                    userRef.once('value', (snapshot) => {
+                        let stores = snapshot.val() || [];
+                        // Filter array untuk membuang ID yang dihapus
+                        const updatedStores = stores.filter(id => id !== branchId);
+                        
+                        // 3. Update daftar managedStores di profil user
+                        userRef.set(updatedStores).then(() => {
+                            // Hapus kartu dari UI secara manual agar bersih
+                            const card = document.getElementById(`card-${branchId}`);
+                            if (card) card.remove();
+                            
+                            // Update dropdown selector
+                            updateStoreSelector(updatedStores);
+                            
+                            alert(`✅ Cabang "${branchName}" berhasil dihapus.`);
+                        });
+                    });
+                })
+                .catch((error) => {
+                    alert("Gagal menghapus cabang: " + error.message);
+                });
+        }
+    });
+}
+
+function switchStore(newStoreId) {
+    if (confirm('Konfirmasi pindah akses ke cabang ini?')) {
+        // 1. Simpan ID baru ke localStorage (Agar saat refresh tetap di cabang ini)
+        localStorage.setItem('storeId', newStoreId);
+        
+        // 2. Matikan semua listener Firebase yang sedang berjalan
+        database.ref('stores/' + currentStoreId + '/stocks').off();
+        database.ref('stores/' + currentStoreId + '/transactions').off();
+        
+        // 3. Update variabel global
+        currentStoreId = newStoreId;
+        
+        // 4. Muat ulang semua data
+        loadDataFromFirebase();
+        
+        // 5. Kembali ke dashboard utama
+        showSection('transaction');
+        
+        // Notifikasi sederhana
+        showSuccessNotification("Berhasil pindah ke cabang!");
+    }
+}
+
+function switchStoreView(selectedId) {
+    // Gunakan logika yang sama dengan switchStore agar data tidak bentrok
+    if (selectedId === currentStoreId) return;
+
+    localStorage.setItem('storeId', selectedId);
+    
+    // Matikan listener lama
+    database.ref('stores/' + currentStoreId + '/stocks').off();
+    database.ref('stores/' + currentStoreId + '/transactions').off();
+    database.ref('stores/' + currentStoreId + '/info').off();
+
+    // Update variabel global dan muat data baru
+    currentStoreId = selectedId;
+    loadDataFromFirebase();
+    
+    showSuccessNotification("Pindah ke dashboard: " + selectedId);
 }
 
         function changePassword() {
