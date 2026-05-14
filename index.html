@@ -123,89 +123,92 @@
                 </div>
 
                 <div class="px-6 pb-8 space-y-6">
-                    <!-- Role Selection -->
-
-                    <!-- Tabs (Conditionally rendered based on role) -->
-
-                        <!-- Account Tab -->
-                        <div id="accountContent" class="space-y-4">
-                            <form onsubmit="handleLogin(event)" class="space-y-4">
-                                <div class="space-y-2">
-                                    <label for="username" class="block text-sm font-medium text-gray-900">Username</label>
-                                    <div class="relative">
-                                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                        </svg>
-                                        <input 
-                                            type="text" 
-                                            id="username" 
-                                            placeholder="Enter your username"
-                                            class="input-field w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg"
-                                        >
-                                    </div>
-                                    <p id="usernameError" class="text-sm text-red-600 hidden"></p>
-                                </div>
-
-                                <div class="space-y-2">
-                                    <div class="flex items-center justify-between">
-                                        <label for="password" class="block text-sm font-medium text-gray-900">Password</label>
-                                        <button type="button" class="text-xs text-indigo-600 hover:underline" onclick="alert('Contact your administrator to reset password')">
-                                            Forgot password?
-                                        </button>
-                                    </div>
-                                    <div class="relative">
-                                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                                        </svg>
-                                        <input 
-                                            type="password" 
-                                            id="password" 
-                                            placeholder="Enter your password"
-                                            class="input-field w-full pl-10 pr-12 py-3 border-2 border-gray-200 rounded-lg"
-                                        >
-                                        <button 
-                                            type="button" 
-                                            onclick="togglePassword()" 
-                                            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                                        >
-                                            <svg id="eyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <p id="passwordError" class="text-sm text-red-600 hidden"></p>
-                                </div>
-
-                                <div class="flex items-center space-x-2">
-                                    <input 
-                                        type="checkbox" 
-                                        id="remember" 
-                                        class="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                    >
-                                    <label for="remember" class="text-sm text-gray-700 cursor-pointer">
-                                        Remember me for 30 days
-                                    </label>
-                                </div>
-
-                                <button 
-                                    type="submit" 
-                                    id="loginBtn"
-                                    class="btn-primary w-full h-12 text-white text-base font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2"
-                                >
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
-                                    </svg>
-                                    <span id="loginBtnText">Sign In</span>
-                                </button>
-                            </form>
-                        </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    <div id="accountContent" class="space-y-4">
+    <!-- FORM LOGIN -->
+    <form onsubmit="handleLogin(event)" class="space-y-4">
+        <div class="space-y-2">
+            <label for="username" class="block text-sm font-medium text-gray-900">Username</label>
+            <div class="relative">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                <input type="text" id="username" placeholder="Enter your username" class="input-field w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg">
             </div>
+        </div>
+
+        <div class="space-y-2">
+            <div class="flex items-center justify-between">
+                <label for="password" class="block text-sm font-medium text-gray-900">Password</label>
+            </div>
+            <div class="relative">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                <input type="password" id="password" placeholder="Enter your password" class="input-field w-full pl-10 pr-12 py-3 border-2 border-gray-200 rounded-lg">
+            </div>
+        </div>
+        <div class="flex items-center space-x-2">
+        <input type="checkbox" id="remember" class="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+        <label for="remember" class="text-sm text-gray-700 cursor-pointer">Remember me for 30 days</label>
+    </div>
+                        </div>
+
+        <!-- TOMBOL SIGN IN UTAMA -->
+        <button type="submit" id="loginBtn" class="btn-primary w-full h-12 text-white text-base font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 mt-4">
+            <span id="loginBtnText">Sign In</span>
+        </button>
+
+        <!-- PEMISAH "OR" -->
+        <div class="relative my-6">
+            <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-gray-200"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+                <span class="px-2 bg-white text-gray-400 font-bold text-xs">OR</span>
+            </div>
+        </div>
+
+        <!-- TOMBOL DAFTAR TOKO (Di bawah Sign In) -->
+        <button type="button" onclick="openRegisterModal()" class="w-full h-12 bg-white border-2 border-indigo-600 text-indigo-600 text-sm font-bold rounded-lg hover:bg-indigo-50 transition-all">
+            Daftar Toko Baru
+        </button>
+    </form>
+</div>
+    <!-- Checkbox Remember Me -->
+                        <!-- Register Tab Content -->
+<div id="registerModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl w-full max-w-md p-8 shadow-2xl relative">
+        <button onclick="closeRegisterModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+
+        <div class="text-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">Daftar Toko Baru</h2>
+            <p class="text-sm text-gray-500">Isi data di bawah untuk pengajuan aktivasi</p>
+        </div>
+        
+        <form onsubmit="handleRegister(event)" class="space-y-4">
+            <!-- KOLOM BARU: NAMA PEMILIK -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Nama Toko</label>
+                <input type="text" id="regStoreName" required class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-lg" placeholder="Contoh: Toko Berkah">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Nama Pemilik</label>
+                <input type="text" id="regFullName" required class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-lg" placeholder="Nama Lengkap Anda">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Username Admin</label>
+                <input type="text" id="regUsername" required class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-lg" placeholder="Username untuk login">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="regPassword" required class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-lg" placeholder="Password min. 6 karakter">
+            </div>
+            
+            <button type="submit" class="btn-primary w-full h-12 text-white font-bold rounded-lg shadow-lg mt-4">
+                Kirim Permohonan Aktivasi
+            </button>
+        </form>
+    </div>
+</div>
 
             <p class="text-center text-sm text-gray-600 mt-6">
                 By signing in, you agree to our 
@@ -217,147 +220,141 @@
     </div>
 
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyCYYvekxHtOuCzwJ6TYcjBuodoJJ09YW3E",
-            authDomain: "simnihbos.firebaseapp.com",
-            databaseURL: "https://simnihbos-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "simnihbos",
-            storageBucket: "simnihbos.firebasestorage.app",
-            messagingSenderId: "637893179915",
-            appId: "1:637893179915:web:4c8b94c41eb8e789e8650e",
-            measurementId: "G-B9PZVLVRLF"
-        };
+        // 1. Inisialisasi Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyCYYvekxHtOuCzwJ6TYcjBuodoJJ09YW3E",
+    authDomain: "simnihbos.firebaseapp.com",
+    databaseURL: "https://simnihbos-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "simnihbos",
+    storageBucket: "simnihbos.firebasestorage.app",
+    messagingSenderId: "637893179915",
+    appId: "1:637893179915:web:4c8b94c41eb8e789e8650e",
+    measurementId: "G-B9PZVLVRLF"
+};
 
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const database = firebase.database();
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
 
-        let showPassword = false;
+// 2. Fungsi untuk Modal (Harus di luar fungsi lain)
+function openRegisterModal() {
+    const modal = document.getElementById('registerModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        console.log("Modal dibuka");
+    } else {
+        console.error("Elemen registerModal tidak ditemukan!");
+    }
+}
 
-        // Initialize DEFAULT ACCOUNTS
-        function initializeDefaultAccounts() {
-            const defaultAccounts = {
-                'kelompok1': {
-                    username: 'kelompok1',
-                    password: 'kelompok1josjis',
-                    name: 'Kelompok1',
-                    role: 'owner',
-                    createdAt: new Date().toISOString()
-                },
-                'admin': {
-                    username: 'admin',
-                    password: 'admin123',
-                    name: 'Administrator',
-                    role: 'owner',
-                    createdAt: new Date().toISOString()
-                },
-                'staff': {
-                    username: 'staff',
-                    password: 'staff123',
-                    name: 'Staff',
-                    role: 'staff',
-                    createdAt: new Date().toISOString()
-                },
-                'mankeub': {
-                    username: 'mankeub',
-                    password: 'keuangan123',
-                    name: 'Man Keu B',
-                    role: 'staff',
-                    createdAt: new Date().toISOString()
-                },
-                'kasir2': {
-                    username: 'kasir2',
-                    password: 'kasir456',
-                    name: 'Kasir 2',
-                    role: 'staff',
-                    createdAt: new Date().toISOString()
-                }
-            };
+function closeRegisterModal() {
+    const modal = document.getElementById('registerModal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
 
-            Object.keys(defaultAccounts).forEach(key => {
-                database.ref('users/' + key).once('value')
-                    .then((snapshot) => {
-                        if (!snapshot.exists()) {
-                            database.ref('users/' + key).set(defaultAccounts[key]);
-                        }
-                    });
-            });
-        }
+// 3. Fungsi Register (Daftar Toko)
+function handleRegister(e) {
+    e.preventDefault();
+    
+    const storeName = document.getElementById('regStoreName').value;
+    const username = document.getElementById('regUsername').value;
+    const password = document.getElementById('regPassword').value;
+    const storeId = 'STR-' + Date.now();
 
+    // Validasi sederhana
+    if (!storeName || !username || !password) {
+        alert("Semua kolom harus diisi!");
+        return;
+    }
 
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const eyeIcon = document.getElementById('eyeIcon');
-            showPassword = !showPassword;
+    database.ref('users/' + username).set({
+        name: username,
+        password: password,
+        role: 'owner',
+        storeId: storeId,
+        isActive: false
+    }).then(() => {
+        return database.ref('stores/' + storeId).set({
+            storeName: storeName,
+            status: 'pending',
+            owner: username
+        });
+    }).then(() => {
+        alert('Pendaftaran Berhasil! Akun Anda sedang menunggu aktivasi.');
+        closeRegisterModal();
+    }).catch((error) => {
+        alert('Terjadi kesalahan: ' + error.message);
+    });
+}
 
-            if (showPassword) {
-                passwordInput.type = 'text';
-                eyeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>';
-            } else {
-                passwordInput.type = 'password';
-                eyeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>';
-            }
-        }
-
-        function handleLogin(e) {
+// 4. Fungsi Login
+function handleLogin(e) {
     e.preventDefault();
     
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value;
-    const usernameError = document.getElementById('usernameError');
-    const passwordError = document.getElementById('passwordError');
     const loginBtn = document.getElementById('loginBtn');
     const loginBtnText = document.getElementById('loginBtnText');
 
-    usernameError.classList.add('hidden');
-    passwordError.classList.add('hidden');
-
     if (!username || !password) {
-        if (!username) {
-            usernameError.textContent = 'Username is required';
-            usernameError.classList.remove('hidden');
-        }
-        if (!password) {
-            passwordError.textContent = 'Password is required';
-            passwordError.classList.remove('hidden');
-        }
+        alert("Isi username dan password!");
         return;
     }
 
     loginBtn.disabled = true;
-    loginBtnText.innerHTML = 'Signing in...';
+    loginBtnText.innerText = "Signing in...";
 
     database.ref('users/' + username).once('value')
         .then((snapshot) => {
             if (snapshot.exists()) {
                 const user = snapshot.val();
                 
-                // PENTING: Hapus pengecekan selectedRole di sini
-                if (user.password === password) { 
-                    localStorage.setItem('isAuthenticated', 'true');
-                    localStorage.setItem('userRole', user.role); // Role otomatis terbaca dari database
-                    localStorage.setItem('username', user.name);
+                // 1. Cek Password
+                if (user.password === password) {
                     
-                    window.location.replace('dashboard-owner.html');
+                    // 2. CEK APAKAH AKUN SUDAH DIAKTIVASI ADMIN
+                    if (user.isActive === true) {
+                        localStorage.setItem('isAuthenticated', 'true');
+                        localStorage.setItem('userRole', user.role);
+                        localStorage.setItem('username', user.name);
+                        localStorage.setItem('storeId', user.storeId);
+                        
+                        alert('Login Berhasil!');
+                        window.location.replace('dashboard-owner.html');
+                    } else {
+                        // Jika isActive masih false
+                        alert('Akun Anda belum aktif. Silakan hubungi Admin untuk persetujuan (Aktivasi).');
+                        resetLoginButton();
+                    }
+
                 } else {
-                    passwordError.textContent = 'Incorrect password';
-                    passwordError.classList.remove('hidden');
-                    resetButton();
+                    alert('Password salah!');
+                    resetLoginButton();
                 }
             } else {
-                usernameError.textContent = 'Username not found';
-                usernameError.classList.remove('hidden');
-                resetButton();
+                alert('User tidak ditemukan!');
+                resetLoginButton();
             }
         })
         .catch((error) => {
             alert('Error: ' + error.message);
-            resetButton();
+            resetLoginButton();
         });
+}
 
-    function resetButton() {
-        loginBtn.disabled = false;
-        loginBtnText.textContent = 'Sign In';
+function resetLoginButton() {
+    const loginBtn = document.getElementById('loginBtn');
+    const loginBtnText = document.getElementById('loginBtnText');
+    loginBtn.disabled = false;
+    loginBtnText.innerText = "Sign In";
+}
+
+// 5. Menutup modal jika klik di luar area box putih
+window.onclick = function(event) {
+    const modal = document.getElementById('registerModal');
+    if (event.target == modal) {
+        closeRegisterModal();
     }
 }
 
